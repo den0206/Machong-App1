@@ -15,6 +15,12 @@
 		3ABFF966238F85180008371A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3ABFF965238F85180008371A /* Assets.xcassets */; };
 		3ABFF969238F85180008371A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3ABFF967238F85180008371A /* LaunchScreen.storyboard */; };
 		3ABFF972238F88060008371A /* WelcomeVIewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABFF971238F88060008371A /* WelcomeVIewController.swift */; };
+		3ACCA6072391FE8B0002E258 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACCA6062391FE8B0002E258 /* SettingTableViewController.swift */; };
+		3AFAED11238FB66E004DA00B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3AFAED10238FB66E004DA00B /* GoogleService-Info.plist */; };
+		3AFAED14238FB7EE004DA00B /* FUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFAED13238FB7EE004DA00B /* FUser.swift */; };
+		3AFAED17238FB832004DA00B /* constracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFAED16238FB832004DA00B /* constracts.swift */; };
+		3AFAED19238FB88F004DA00B /* heplerFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFAED18238FB88F004DA00B /* heplerFunctions.swift */; };
+		3AFAED1B238FB8D2004DA00B /* References.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFAED1A238FB8D2004DA00B /* References.swift */; };
 		B0D22E04C9988CC79823F0C0 /* Pods_Machong_App1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99D0F200D3CC27BD236582D5 /* Pods_Machong_App1.framework */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +35,12 @@
 		3ABFF968238F85180008371A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3ABFF96A238F85180008371A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3ABFF971238F88060008371A /* WelcomeVIewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeVIewController.swift; sourceTree = "<group>"; };
+		3ACCA6062391FE8B0002E258 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
+		3AFAED10238FB66E004DA00B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		3AFAED13238FB7EE004DA00B /* FUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FUser.swift; sourceTree = "<group>"; };
+		3AFAED16238FB832004DA00B /* constracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = constracts.swift; sourceTree = "<group>"; };
+		3AFAED18238FB88F004DA00B /* heplerFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = heplerFunctions.swift; sourceTree = "<group>"; };
+		3AFAED1A238FB8D2004DA00B /* References.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = References.swift; sourceTree = "<group>"; };
 		905FFD9BF1123E029A7C58E3 /* Pods-Machong-App1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Machong-App1.release.xcconfig"; path = "Target Support Files/Pods-Machong-App1/Pods-Machong-App1.release.xcconfig"; sourceTree = "<group>"; };
 		99D0F200D3CC27BD236582D5 /* Pods_Machong_App1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Machong_App1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B62643280D39D5D3FDDC4BC9 /* Pods-Machong-App1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Machong-App1.debug.xcconfig"; path = "Target Support Files/Pods-Machong-App1/Pods-Machong-App1.debug.xcconfig"; sourceTree = "<group>"; };
@@ -80,10 +92,13 @@
 				3ABFF95E238F85160008371A /* SceneDelegate.swift */,
 				3ABFF960238F85160008371A /* ViewController.swift */,
 				3ABFF962238F85160008371A /* Main.storyboard */,
+				3AFAED12238FB7D5004DA00B /* class */,
 				3ABFF970238F87250008371A /* controller */,
+				3AFAED15238FB80C004DA00B /* helper */,
 				3ABFF965238F85180008371A /* Assets.xcassets */,
 				3ABFF967238F85180008371A /* LaunchScreen.storyboard */,
 				3ABFF96A238F85180008371A /* Info.plist */,
+				3AFAED10238FB66E004DA00B /* GoogleService-Info.plist */,
 			);
 			path = "Machong-App1";
 			sourceTree = "<group>";
@@ -93,8 +108,27 @@
 			children = (
 				3ABFF971238F88060008371A /* WelcomeVIewController.swift */,
 				3AA1B995238F904400A60FA6 /* FinishRegistrationViewController.swift */,
+				3ACCA6062391FE8B0002E258 /* SettingTableViewController.swift */,
 			);
 			path = controller;
+			sourceTree = "<group>";
+		};
+		3AFAED12238FB7D5004DA00B /* class */ = {
+			isa = PBXGroup;
+			children = (
+				3AFAED13238FB7EE004DA00B /* FUser.swift */,
+			);
+			path = class;
+			sourceTree = "<group>";
+		};
+		3AFAED15238FB80C004DA00B /* helper */ = {
+			isa = PBXGroup;
+			children = (
+				3AFAED16238FB832004DA00B /* constracts.swift */,
+				3AFAED18238FB88F004DA00B /* heplerFunctions.swift */,
+				3AFAED1A238FB8D2004DA00B /* References.swift */,
+			);
+			path = helper;
 			sourceTree = "<group>";
 		};
 		D8DB9B68342ADD358E30DE43 /* Frameworks */ = {
@@ -167,6 +201,7 @@
 			files = (
 				3ABFF969238F85180008371A /* LaunchScreen.storyboard in Resources */,
 				3ABFF966238F85180008371A /* Assets.xcassets in Resources */,
+				3AFAED11238FB66E004DA00B /* GoogleService-Info.plist in Resources */,
 				3ABFF964238F85160008371A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -220,7 +255,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AFAED1B238FB8D2004DA00B /* References.swift in Sources */,
+				3AFAED17238FB832004DA00B /* constracts.swift in Sources */,
+				3AFAED19238FB88F004DA00B /* heplerFunctions.swift in Sources */,
 				3AA1B996238F904400A60FA6 /* FinishRegistrationViewController.swift in Sources */,
+				3ACCA6072391FE8B0002E258 /* SettingTableViewController.swift in Sources */,
+				3AFAED14238FB7EE004DA00B /* FUser.swift in Sources */,
 				3ABFF961238F85160008371A /* ViewController.swift in Sources */,
 				3ABFF972238F88060008371A /* WelcomeVIewController.swift in Sources */,
 				3ABFF95D238F85160008371A /* AppDelegate.swift in Sources */,

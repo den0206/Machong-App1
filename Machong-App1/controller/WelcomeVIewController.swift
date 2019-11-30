@@ -8,6 +8,7 @@
 
 import UIKit
 import ProgressHUD
+import Firebase
 
 class WelcomeVIewController: UIViewController {
     
@@ -27,6 +28,16 @@ class WelcomeVIewController: UIViewController {
     //MARK: login & register
     
     @IBAction func loginButtonPressed(_ sender: Any) {
+        
+        if emailaTextField.text != "" && emailaTextField.text != "" {
+            
+            loginUser()
+            
+        } else {
+            ProgressHUD.showError("Eメールかパスワードが空欄です。")
+        }
+        
+        dissmisKeyBoard()
     }
     
     
@@ -50,12 +61,42 @@ class WelcomeVIewController: UIViewController {
         }
     }
     
+  func loginUser() {
+        ProgressHUD.show("Login...")
+        
+        FUser.loginUserWith(email: emailaTextField.text!, password: passwordTextField.text!) { (error) in
+            
+            if error != nil {
+                ProgressHUD.showError(error!.localizedDescription)
+                return
+            }
+            
+            self.goToApp()
+        }
+    }
+    
     func registerUser() {
         
         performSegue(withIdentifier: "welocomeToFinishRegistration", sender: self)
         
         cleanTextField()
         dissmisKeyBoard()
+    }
+    
+    func goToApp() {
+        ProgressHUD.dismiss()
+        
+        cleanTextField()
+        dissmisKeyBoard()
+        
+        NotificationCenter.default.post(name: Notification.Name(rawValue: USER_DID_LOGIN_NOTIFICATION), object: nil, userInfo: [kUSERID : FUser.currentId()])
+        
+        //present APP
+        
+        let mainVC = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MainApplication") as! UITabBarController
+        self.present(mainVC, animated: true,completion: nil)
+        
+        
     }
     
     //MARK: clean
