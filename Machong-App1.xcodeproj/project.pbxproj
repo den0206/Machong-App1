@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A12839C2392285100A29D9E /* RecentChatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12839B2392285100A29D9E /* RecentChatsTableViewCell.swift */; };
+		3A12839E23922B7100A29D9E /* ChatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12839D23922B7100A29D9E /* ChatsViewController.swift */; };
+		3A203B1323922D6F00347087 /* UsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203B1223922D6F00347087 /* UsersTableViewController.swift */; };
+		3A203B1523922FAC00347087 /* UsersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203B1423922FAC00347087 /* UsersTableViewCell.swift */; };
+		3A3DB10023939C940060EBD0 /* Recent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3DB0FF23939C940060EBD0 /* Recent.swift */; };
 		3AA1B996238F904400A60FA6 /* FinishRegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA1B995238F904400A60FA6 /* FinishRegistrationViewController.swift */; };
 		3ABFF95D238F85160008371A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABFF95C238F85160008371A /* AppDelegate.swift */; };
 		3ABFF95F238F85160008371A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABFF95E238F85160008371A /* SceneDelegate.swift */; };
@@ -16,6 +21,7 @@
 		3ABFF969238F85180008371A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3ABFF967238F85180008371A /* LaunchScreen.storyboard */; };
 		3ABFF972238F88060008371A /* WelcomeVIewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABFF971238F88060008371A /* WelcomeVIewController.swift */; };
 		3ACCA6072391FE8B0002E258 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACCA6062391FE8B0002E258 /* SettingTableViewController.swift */; };
+		3AD335AC2393768B008B20B4 /* ProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD335AB2393768B008B20B4 /* ProfileTableViewController.swift */; };
 		3AFAED11238FB66E004DA00B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3AFAED10238FB66E004DA00B /* GoogleService-Info.plist */; };
 		3AFAED14238FB7EE004DA00B /* FUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFAED13238FB7EE004DA00B /* FUser.swift */; };
 		3AFAED17238FB832004DA00B /* constracts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AFAED16238FB832004DA00B /* constracts.swift */; };
@@ -25,6 +31,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3A12839B2392285100A29D9E /* RecentChatsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatsTableViewCell.swift; sourceTree = "<group>"; };
+		3A12839D23922B7100A29D9E /* ChatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsViewController.swift; sourceTree = "<group>"; };
+		3A203B1223922D6F00347087 /* UsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersTableViewController.swift; sourceTree = "<group>"; };
+		3A203B1423922FAC00347087 /* UsersTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersTableViewCell.swift; sourceTree = "<group>"; };
+		3A3DB0FF23939C940060EBD0 /* Recent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recent.swift; sourceTree = "<group>"; };
 		3AA1B995238F904400A60FA6 /* FinishRegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishRegistrationViewController.swift; sourceTree = "<group>"; };
 		3ABFF959238F85160008371A /* Machong-App1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Machong-App1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3ABFF95C238F85160008371A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -36,6 +47,7 @@
 		3ABFF96A238F85180008371A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3ABFF971238F88060008371A /* WelcomeVIewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeVIewController.swift; sourceTree = "<group>"; };
 		3ACCA6062391FE8B0002E258 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
+		3AD335AB2393768B008B20B4 /* ProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewController.swift; sourceTree = "<group>"; };
 		3AFAED10238FB66E004DA00B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3AFAED13238FB7EE004DA00B /* FUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FUser.swift; sourceTree = "<group>"; };
 		3AFAED16238FB832004DA00B /* constracts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = constracts.swift; sourceTree = "<group>"; };
@@ -67,6 +79,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		3A12839A2392282A00A29D9E /* View */ = {
+			isa = PBXGroup;
+			children = (
+				3A203B1423922FAC00347087 /* UsersTableViewCell.swift */,
+				3A12839B2392285100A29D9E /* RecentChatsTableViewCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		3ABFF950238F85160008371A = {
 			isa = PBXGroup;
 			children = (
@@ -93,6 +114,7 @@
 				3ABFF960238F85160008371A /* ViewController.swift */,
 				3ABFF962238F85160008371A /* Main.storyboard */,
 				3AFAED12238FB7D5004DA00B /* class */,
+				3A12839A2392282A00A29D9E /* View */,
 				3ABFF970238F87250008371A /* controller */,
 				3AFAED15238FB80C004DA00B /* helper */,
 				3ABFF965238F85180008371A /* Assets.xcassets */,
@@ -109,6 +131,9 @@
 				3ABFF971238F88060008371A /* WelcomeVIewController.swift */,
 				3AA1B995238F904400A60FA6 /* FinishRegistrationViewController.swift */,
 				3ACCA6062391FE8B0002E258 /* SettingTableViewController.swift */,
+				3A203B1223922D6F00347087 /* UsersTableViewController.swift */,
+				3A12839D23922B7100A29D9E /* ChatsViewController.swift */,
+				3AD335AB2393768B008B20B4 /* ProfileTableViewController.swift */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -117,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				3AFAED13238FB7EE004DA00B /* FUser.swift */,
+				3A3DB0FF23939C940060EBD0 /* Recent.swift */,
 			);
 			path = class;
 			sourceTree = "<group>";
@@ -255,15 +281,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A203B1323922D6F00347087 /* UsersTableViewController.swift in Sources */,
+				3A12839C2392285100A29D9E /* RecentChatsTableViewCell.swift in Sources */,
 				3AFAED1B238FB8D2004DA00B /* References.swift in Sources */,
 				3AFAED17238FB832004DA00B /* constracts.swift in Sources */,
 				3AFAED19238FB88F004DA00B /* heplerFunctions.swift in Sources */,
 				3AA1B996238F904400A60FA6 /* FinishRegistrationViewController.swift in Sources */,
+				3AD335AC2393768B008B20B4 /* ProfileTableViewController.swift in Sources */,
 				3ACCA6072391FE8B0002E258 /* SettingTableViewController.swift in Sources */,
+				3A3DB10023939C940060EBD0 /* Recent.swift in Sources */,
 				3AFAED14238FB7EE004DA00B /* FUser.swift in Sources */,
 				3ABFF961238F85160008371A /* ViewController.swift in Sources */,
 				3ABFF972238F88060008371A /* WelcomeVIewController.swift in Sources */,
+				3A203B1523922FAC00347087 /* UsersTableViewCell.swift in Sources */,
 				3ABFF95D238F85160008371A /* AppDelegate.swift in Sources */,
+				3A12839E23922B7100A29D9E /* ChatsViewController.swift in Sources */,
 				3ABFF95F238F85160008371A /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -408,7 +440,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B62643280D39D5D3FDDC4BC9 /* Pods-Machong-App1.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4KJFNVZ8R6;
 				INFOPLIST_FILE = "Machong-App1/Info.plist";
@@ -427,7 +458,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 905FFD9BF1123E029A7C58E3 /* Pods-Machong-App1.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 4KJFNVZ8R6;
 				INFOPLIST_FILE = "Machong-App1/Info.plist";
