@@ -23,9 +23,17 @@ class RecentChatsTableViewCell: UITableViewCell {
     
     @IBOutlet weak var messageCounterBackgroundView: UIView!
     
+    var indexPath : IndexPath!
+    var delegate : RecentChatsTableViewCellDelegate?
+    let tapGesture = UITapGestureRecognizer()
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        tapGesture.addTarget(self, action: #selector(avatarTapped))
+        avatarImageView.isUserInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(tapGesture)
        
     }
 
@@ -33,6 +41,49 @@ class RecentChatsTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
  
+    }
+    
+    func generateCell(recentChat: NSDictionary, indexPath : IndexPath) {
+        self.indexPath = indexPath
+        
+        self.fullnamelabel.text = recentChat[kWITHUSERFULLNAME] as? String
+        self.lastMessageLabel.text = recentChat[kLASTMESSAGE] as? String
+        self.messageCounterLabel.text = recentChat[kCOUNTER] as? String
+        
+        if let avatarImage = recentChat[kAVATAR] {
+            imageFromData(pictureData: avatarImage as! String) { (avatar) in
+                self.avatarImageView.image = avatar!.circleMasked
+            }
+        }
+        
+        if recentChat[kCOUNTER] as! Int != 0 {
+            self.messageCounterLabel.text = "\(recentChat[kCOUNTER] as! Int)"
+            self.messageCounterBackgroundView.isHidden = false
+            self.messageCounterLabel.isHidden = false
+            
+        } else {
+            self.messageCounterBackgroundView.isHidden = true
+            self.messageCounterLabel.isHidden = true
+        }
+        
+        var date : Date!
+        
+        if let created = recentChat[kDATE] {
+            if (created as! String).count != 14 {
+                date = Date()
+            } else {
+                date = dateFormatter().date(from: created as! String)!
+            }
+        } else {
+            date = Date()
+        }
+        
+        self.dateLabel.text = timeElapsed(date: date)
+
+    }
+    
+    @objc func avatarTapped() {
+        delegate?.didAvatarTapped(indexPath: indexPath)
     }
 
 }
