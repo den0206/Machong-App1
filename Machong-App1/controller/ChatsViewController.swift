@@ -75,7 +75,7 @@ class ChatsViewController: UIViewController {
                     if recent[kLASTMESSAGE] as! String != "" && recent[kCHATROOMID] != nil && recent[kRECENTID] != nil {
                         self.recentChats.append(recent)
                         
-                        print(self.recentChats.count)
+                       
                     }
                 }
                 self.tableView.reloadData()
@@ -123,6 +123,25 @@ extension ChatsViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        var recent : NSDictionary!
+        
+        if searchController.isActive && searchController.searchBar.text != "" {
+            
+            recent = filterdChats[indexPath.row]
+        } else{
+            recent = recentChats[indexPath.row]
+        }
+        
+        restartRecentChat(recent: recent)
+        
+        let messageVC = MessageViewController()
+        messageVC.chatRoomId = (recent[kCHATROOMID] as? String)!
+        messageVC.memberIds = (recent[kMEMBERS] as? [String])!
+        messageVC.membersToPush = (recent[kMEMBERSTOPUSH] as? [String])!
+        
+        
+        navigationController?.pushViewController(messageVC, animated: true)
         
     }
 }

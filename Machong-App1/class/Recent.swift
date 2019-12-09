@@ -111,3 +111,52 @@ func createRecentItem(userId : String, chatRoomId : String, members : [String], 
     localReference.setData(recent)
     
 }
+
+func restartRecentChat(recent : NSDictionary) {
+    
+    // for private
+    
+    if recent[kTYPE] as! String == kPRIVATE {
+        createRecentChat(members: recent[kMEMBERSTOPUSH] as! [String], chatRoomId: recent[kCHATROOMID] as! String, withUserName: FUser.currentUser()!.firstname, type: kPRIVATE, users: [FUser.currentUser()!], avatarofGroup: nil)
+    }
+    
+    // for Group
+}
+
+func updateRecent(chatRoomId : String, lastMessage : String) {
+    reference(.Recent).whereField(kCHATROOMID, isEqualTo: chatRoomId).getDocuments { (snapshot, error) in
+        
+        guard let snapshot = snapshot else {return}
+        
+        if !snapshot.isEmpty {
+            for recent in snapshot.documents {
+                
+                let currentRecent = recent.data() as NSDictionary
+                
+                if currentRecent[kUSERID] as? String == FUser.currentId() {
+                    
+                }
+                
+            }
+        }
+        
+    }
+}
+
+func updateRecentItem(recent : NSDictionary, lastMessage : String) {
+    
+    let date = dateFormatter().string(from: Date())
+    
+    var counter = recent[kCOUNTER] as! Int
+    
+    if recent[kUSERID] as? String == FUser.currentId() {
+        counter += 1
+    }
+    
+    let values = [kLASTMESSAGE : lastMessage, kCOUNTER : counter, kDATE : date] as [String : Any]
+    
+    reference(.Recent).document(recent[kCHATROOMID] as! String).updateData(values)
+    
+    
+    
+}

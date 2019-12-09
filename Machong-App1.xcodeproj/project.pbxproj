@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A0B74DD239B373D00E7DFD8 /* outGoingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0B74DC239B373D00E7DFD8 /* outGoingMessage.swift */; };
 		3A12839C2392285100A29D9E /* RecentChatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12839B2392285100A29D9E /* RecentChatsTableViewCell.swift */; };
 		3A12839E23922B7100A29D9E /* ChatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12839D23922B7100A29D9E /* ChatsViewController.swift */; };
 		3A203B1323922D6F00347087 /* UsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203B1223922D6F00347087 /* UsersTableViewController.swift */; };
 		3A203B1523922FAC00347087 /* UsersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203B1423922FAC00347087 /* UsersTableViewCell.swift */; };
 		3A3DB10023939C940060EBD0 /* Recent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3DB0FF23939C940060EBD0 /* Recent.swift */; };
+		3A599BE6239B6722000E3A6D /* inComingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A599BE5239B6722000E3A6D /* inComingMessage.swift */; };
+		3A7A2F9F239A75D900EB3BF3 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7A2F9E239A75D900EB3BF3 /* MessageViewController.swift */; };
+		3A7A2FA1239A76C700EB3BF3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7A2FA0239A76C700EB3BF3 /* Message.swift */; };
 		3AA1B996238F904400A60FA6 /* FinishRegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA1B995238F904400A60FA6 /* FinishRegistrationViewController.swift */; };
 		3ABFF95D238F85160008371A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABFF95C238F85160008371A /* AppDelegate.swift */; };
 		3ABFF95F238F85160008371A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABFF95E238F85160008371A /* SceneDelegate.swift */; };
@@ -31,11 +35,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3A0B74DC239B373D00E7DFD8 /* outGoingMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = outGoingMessage.swift; sourceTree = "<group>"; };
 		3A12839B2392285100A29D9E /* RecentChatsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatsTableViewCell.swift; sourceTree = "<group>"; };
 		3A12839D23922B7100A29D9E /* ChatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsViewController.swift; sourceTree = "<group>"; };
 		3A203B1223922D6F00347087 /* UsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersTableViewController.swift; sourceTree = "<group>"; };
 		3A203B1423922FAC00347087 /* UsersTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersTableViewCell.swift; sourceTree = "<group>"; };
 		3A3DB0FF23939C940060EBD0 /* Recent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recent.swift; sourceTree = "<group>"; };
+		3A599BE5239B6722000E3A6D /* inComingMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inComingMessage.swift; sourceTree = "<group>"; };
+		3A7A2F9E239A75D900EB3BF3 /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
+		3A7A2FA0239A76C700EB3BF3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		3AA1B995238F904400A60FA6 /* FinishRegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishRegistrationViewController.swift; sourceTree = "<group>"; };
 		3ABFF959238F85160008371A /* Machong-App1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Machong-App1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3ABFF95C238F85160008371A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -134,6 +142,7 @@
 				3A203B1223922D6F00347087 /* UsersTableViewController.swift */,
 				3A12839D23922B7100A29D9E /* ChatsViewController.swift */,
 				3AD335AB2393768B008B20B4 /* ProfileTableViewController.swift */,
+				3A7A2F9E239A75D900EB3BF3 /* MessageViewController.swift */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -143,6 +152,9 @@
 			children = (
 				3AFAED13238FB7EE004DA00B /* FUser.swift */,
 				3A3DB0FF23939C940060EBD0 /* Recent.swift */,
+				3A7A2FA0239A76C700EB3BF3 /* Message.swift */,
+				3A0B74DC239B373D00E7DFD8 /* outGoingMessage.swift */,
+				3A599BE5239B6722000E3A6D /* inComingMessage.swift */,
 			);
 			path = class;
 			sourceTree = "<group>";
@@ -284,6 +296,7 @@
 				3A203B1323922D6F00347087 /* UsersTableViewController.swift in Sources */,
 				3A12839C2392285100A29D9E /* RecentChatsTableViewCell.swift in Sources */,
 				3AFAED1B238FB8D2004DA00B /* References.swift in Sources */,
+				3A7A2FA1239A76C700EB3BF3 /* Message.swift in Sources */,
 				3AFAED17238FB832004DA00B /* constracts.swift in Sources */,
 				3AFAED19238FB88F004DA00B /* heplerFunctions.swift in Sources */,
 				3AA1B996238F904400A60FA6 /* FinishRegistrationViewController.swift in Sources */,
@@ -292,9 +305,12 @@
 				3A3DB10023939C940060EBD0 /* Recent.swift in Sources */,
 				3AFAED14238FB7EE004DA00B /* FUser.swift in Sources */,
 				3ABFF961238F85160008371A /* ViewController.swift in Sources */,
+				3A0B74DD239B373D00E7DFD8 /* outGoingMessage.swift in Sources */,
 				3ABFF972238F88060008371A /* WelcomeVIewController.swift in Sources */,
 				3A203B1523922FAC00347087 /* UsersTableViewCell.swift in Sources */,
+				3A7A2F9F239A75D900EB3BF3 /* MessageViewController.swift in Sources */,
 				3ABFF95D238F85160008371A /* AppDelegate.swift in Sources */,
+				3A599BE6239B6722000E3A6D /* inComingMessage.swift in Sources */,
 				3A12839E23922B7100A29D9E /* ChatsViewController.swift in Sources */,
 				3ABFF95F238F85160008371A /* SceneDelegate.swift in Sources */,
 			);

@@ -784,7 +784,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="j7q-Me-2ek" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5758" y="-217"/>
+            <point key="canvasLocation" x="6516" y="-217"/>
         </scene>
         <!--Profile Table View Controller-->
         <scene sceneID="Dkr-7K-PFs">
@@ -857,14 +857,14 @@
                                                     </constraints>
                                                 </view>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E84-aG-tWp">
-                                                    <rect key="frame" x="229.5" y="17.5" width="164.5" height="30"/>
+                                                    <rect key="frame" x="229.5" y="2.5" width="164.5" height="60"/>
                                                     <state key="normal" image="message"/>
                                                     <connections>
                                                         <action selector="messageButtonPressed:" destination="naM-QQ-GJU" eventType="touchUpInside" id="Cqx-Qg-usO"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UnD-dB-5R3">
-                                                    <rect key="frame" x="20" y="17.5" width="164.5" height="30"/>
+                                                    <rect key="frame" x="20" y="2.5" width="164.5" height="60"/>
                                                     <state key="normal" image="call"/>
                                                     <connections>
                                                         <action selector="callButtonPressed:" destination="naM-QQ-GJU" eventType="touchUpInside" id="ws3-CX-641"/>
@@ -927,7 +927,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wde-ad-x6L" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6712" y="-228"/>
+            <point key="canvasLocation" x="7465" y="-220"/>
         </scene>
     </scenes>
     <resources>
