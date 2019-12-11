@@ -32,9 +32,14 @@ class MessageViewController: MessagesViewController {
     var loadedMessageCount = 0
     
     var loadedMessages : [NSDictionary] = []
+    var allPctureMessages : [String] = []
     
     var withUsers : [FUser] = []
     
+//    deinit {
+//        updatelistner?.remove()
+//    }
+//
  
 
     override func viewDidLoad() {
@@ -59,9 +64,14 @@ class MessageViewController: MessagesViewController {
         // 表示している画面とキーボードの重複を防ぐ
         maintainPositionOnKeyboardFrameChanged = true // default false
         
+        // accesary
         
+        configureAccesary()
         
+  
     }
+    
+    
     
 
     
@@ -122,6 +132,7 @@ extension MessageViewController : MessagesDataSource {
             }
         }
     }
+    
     
 }
 
@@ -232,7 +243,7 @@ extension MessageViewController {
     
     //MARK: send Message
     
-    func sendMessage(text : String?,  picture : String?, location : String?, video : NSURL?, audio : String?) {
+    func sendMessage(text : String?,  picture : UIImage?, location : String?, video : NSURL?, audio : String?) {
         
         var outgiongMessage : OutGoingMessage?
         let currentUser = FUser.currentUser()!
@@ -245,8 +256,47 @@ extension MessageViewController {
         
         // picture
         
+        if let pic = picture {
+            uploadImage(image: pic, chatRoomId: chatRoomId, view: self.navigationController!.view) { (imageLink) in
+                if imageLink != nil {
+                    let text = "[\(kPICTURE)]"
+                    
+                    outgiongMessage = OutGoingMessage(message: text, pictureLink: imageLink!, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kPICTURE)
+                    
+//                    self.messagesCollectionView.reloadData()
+                    
+                    outgiongMessage?.sendMessage(chatRoomId: self.chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: self.memberIds, memberToPush: self.membersToPush)
+                    
+                }
+                
+            }
+            return
+        }
         
-        ///
+        // video
+        
+        if let video = video {
+            
+            let videoData = NSData(contentsOfFile: video.path!)
+            
+            let dataThumbnail = videoThmbnail(video: video).jpegData(compressionQuality: 0.3)
+            
+            uploadVideo(video: videoData!, chatRoomId: chatRoomId, view: self.navigationController!.view) { (videoLink) in
+                
+                if videoLink != nil {
+                    let text = "[\(kVIDEO)]"
+                    
+                    outgiongMessage = OutGoingMessage(message: text, videoLink: videoLink!, thumbnail: dataThumbnail! as NSData, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kVIDEO)
+                    
+                    outgiongMessage?.sendMessage(chatRoomId: self.chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: self.memberIds, memberToPush: self.membersToPush)
+                }
+            }
+            return
+
+        }
+        
+        
+        //  FOr only Text (exclude another - Type)
         
         outgiongMessage?.sendMessage(chatRoomId: chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: memberIds, memberToPush: membersToPush)
         
@@ -276,7 +326,7 @@ extension MessageViewController {
         reference(.Message).document(FUser.currentId()).collection(chatRoomId).order(by: kDATE, descending: true).limit(to: 11).getDocuments { (snapshot, error) in
             
             guard let snapshot = snapshot else {return}
-            
+        
             let sorted = ((dictionaryFromSnapshots(snapshots: snapshot.documents)) as NSArray).sortedArray(using: [NSSortDescriptor(key: kDATE, ascending: true)]) as! [NSDictionary]
             
             self.loadedMessages = self.removeBadMessage(allMessages: sorted)
@@ -284,6 +334,11 @@ extension MessageViewController {
             self.insertMessages()
             
             self.messagesCollectionView.reloadData()
+            
+            self.messagesCollectionView.scrollToBottom()
+            
+            self.getPicturesMessages()
+
             
             self.getOldMessagesinBackGround()
             
@@ -317,7 +372,11 @@ extension MessageViewController {
                         if let type = itm[kTYPE] {
                             if self.legitType.contains(type as! String) {
                                 
-                                // picture
+                                // New Picture Link
+                                
+                                if type as! String == kPICTURE {
+                                    self.newPictureLinkAdd(link: itm[kPICTURE] as! String)
+                                }
                                 
                                 //
                                 
@@ -391,6 +450,8 @@ extension MessageViewController {
                 
                 self.loadedMessages = self.removeBadMessage(allMessages: sorted) + self.loadedMessages
                 
+                self.getPicturesMessages()
+                print(self.allPctureMessages.count)
                
                 self.maxMessageNumber = self.loadedMessages.count - self.loadedMessageCount - 1
                 self.minimumMessageNumber = self.maxMessageNumber - kNUMBEROFMESSAGES
@@ -444,10 +505,12 @@ extension MessageViewController {
     @objc func refresh() {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            if self.isLastsectionVisible() {
+            
+            if self.loadedMessages.count > self.loadedMessageCount {
                 self.loadMoreMessages(maxNumber: self.maxMessageNumber, minNumber: self.minimumMessageNumber)
                 self.messagesCollectionView.reloadData()
             }
+            
             self.refreshController.endRefreshing()
             
         }
@@ -497,4 +560,97 @@ extension MessageViewController {
         return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
     }
     
+    func getPicturesMessages() {
+        
+        allPctureMessages = []
+        
+        for message in loadedMessages {
+            
+            if message[kTYPE] as! String == kPICTURE {
+                allPctureMessages.append(message[kPICTURE] as! String)
+            }
+        }
+        
+    }
+    
+    func newPictureLinkAdd(link : String) {
+        allPctureMessages.append(link)
+    }
+    
+}
+
+//MARK: custiomize Options
+
+
+extension MessageViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+    
+    func configureAccesary() {
+        let optionItems = InputBarButtonItem(type: .system)
+        optionItems.tintColor = .black
+        optionItems.image = #imageLiteral(resourceName: "invite")
+        
+        optionItems.addTarget(self, action: #selector(showOptions), for: .touchUpInside)
+        
+        optionItems.setSize(CGSize(width: 60, height: 30), animated: false)
+        messageInputBar.leftStackView.alignment = .center
+        messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
+        
+        messageInputBar.setStackViewItems([optionItems], forStack: .left, animated: true)
+        
+    }
+    
+    @objc func showOptions() {
+        
+        let camera = Camera(delegate_: self)
+        
+        let optionmenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let takePhotoOrVideo = UIAlertAction(title: "Camera", style: .default) { (action) in
+            // take Photo or Library vir your Devise
+            
+            print("take Devise")
+        }
+        
+        let showPhoto = UIAlertAction(title: "Photo Library", style: .default) { (action) in
+            // open Photo Library
+            camera.PresentPhotoLibrary(target: self, canEdit: false)
+        }
+        
+        let shareVideo = UIAlertAction(title: "Video Library", style: .default) { (action) in
+            camera.PresentVideoLibrary(target: self, canEdit: false)
+        }
+        
+        let shareLocation = UIAlertAction(title: "Location", style: .default) { (action) in
+            // Share your Location
+            print("location")
+        }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            
+        }
+        
+        
+        takePhotoOrVideo.setValue(UIImage(named: "camera"), forKey: "image")
+        showPhoto.setValue(UIImage(named: "picture"), forKey: "image")
+        shareVideo.setValue(UIImage(named: "video"), forKey: "image")
+        shareLocation.setValue(UIImage(named: "location"), forKey: "image")
+        
+        optionmenu.addAction(takePhotoOrVideo)
+        optionmenu.addAction(showPhoto)
+        optionmenu.addAction(shareVideo)
+        optionmenu.addAction(shareLocation)
+        optionmenu.addAction(cancel)
+        
+        present(optionmenu,animated: true,completion: nil)
+        
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        let video = info[UIImagePickerController.InfoKey.mediaURL] as? NSURL
+        let picture = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        
+        sendMessage(text: nil, picture: picture, location: nil, video: video, audio: nil)
+        picker.dismiss(animated: true, completion: nil)
+    }
 }

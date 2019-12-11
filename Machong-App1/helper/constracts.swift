@@ -28,7 +28,7 @@ public let APP_STARTED_NOTIFICATION = "AppStartedNotification"
 
 
 //IDS and Keys
-public let kFILEREFERENCE = "gs://whatsup-clone-f042a.appspot.com"
+public let kFILEREFERENCE = "gs://machong-app1-f661b.appspot.com/"
 public let kONESIGNALAPPID = ""
 public let kSINCHKEY = ""
 public let kSINCHSECRET = ""

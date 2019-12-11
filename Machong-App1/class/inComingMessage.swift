@@ -24,6 +24,8 @@ class InComingMessage {
         switch type {
         case kTEXT:
             message = creatTextMessage(messageDictionay: messageDictionary, chatRoomId: chatRoomID)
+        case kPICTURE :
+            message = createPictureMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
         default:
             print("Typeがわかりません")
         }
@@ -59,5 +61,45 @@ class InComingMessage {
         let text = messageDictionay[kMESSAGE] as! String
         
         return Message(text: text, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
+    }
+    
+    //MARK: Picture Message
+    
+    func createPictureMessage(messageDictionary : NSDictionary, chatRoomId : String) -> Message? {
+        
+        let name = messageDictionary[kSENDERNAME] as? String
+        let userid = messageDictionary[kSENDERID] as? String
+        let messageId = messageDictionary[kMESSAGEID] as? String
+        
+     
+        let date : Date!
+        
+        if let created = messageDictionary[kDATE] {
+            if (created as! String).count !=  14 {
+                date = Date()
+            } else {
+                date = dateFormatter().date(from: created as! String)
+            }
+        } else {
+            date = Date()
+            
+        }
+        
+        let image = downLoadImage(imageUrl: messageDictionary[kPICTURE] as! String)
+        
+        if image != nil {
+            return Message(image: image!, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
+        } else {
+            print("写真が見つかりません")
+            
+            // noimagePalceholder picture Message
+            
+//            let errorPicture = UIImage(named: "error")
+//            return Message(image: errorPicture, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
+            return nil
+        }
+        
+        
+        
     }
 }
