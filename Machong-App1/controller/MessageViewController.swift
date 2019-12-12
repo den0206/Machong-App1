@@ -365,7 +365,7 @@ extension MessageViewController {
             
             self.messagesCollectionView.reloadData()
             
-            self.messagesCollectionView.scrollToBottom()
+            self.messagesCollectionView.scrollToBottom(animated: true)
             
             self.getPicturesMessages()
 
@@ -415,6 +415,7 @@ extension MessageViewController {
                                 }
                                 
                                 self.messagesCollectionView.reloadData()
+                                self.messagesCollectionView.scrollToBottom()
                             }
                         }
                     }
@@ -682,5 +683,8 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
         
         sendMessage(text: nil, picture: picture, location: nil, video: video, audio: nil)
         picker.dismiss(animated: true, completion: nil)
+        
+//        messagesCollectionView.reloadData()
+//        messagesCollectionView.scrollToBottom(animated: true)
     }
 }
