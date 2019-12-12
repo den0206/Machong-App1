@@ -19,12 +19,30 @@ private struct MockMediaItem: MediaItem {
     var image: UIImage?
     var placeholderImage: UIImage
     var size: CGSize
+    var fileUrl : NSURL?
 
     init(image: UIImage) {
         self.image = image
         self.size = CGSize(width: 240, height: 240)
         self.placeholderImage = UIImage()
     }
+}
+
+struct MockVideoItem: MediaItem {
+
+    var url: URL?
+    var image: UIImage?
+    var placeholderImage: UIImage
+    var size: CGSize
+    var fileUrl : NSURL?
+
+    init(withFileUrl : NSURL) {
+        self.fileUrl = withFileUrl
+        self.size = CGSize(width: 240, height: 240)
+        self.placeholderImage = UIImage()
+    }
+    
+    
 }
 
 internal struct Message: MessageType {
@@ -34,6 +52,8 @@ internal struct Message: MessageType {
     var sentDate: Date
     var kind: MessageKind
     
+   
+    
     
     
 
@@ -42,6 +62,7 @@ internal struct Message: MessageType {
         self.sender = sender
         self.messageId = messageId
         self.sentDate = date
+        
     }
 
     init(text: String, sender: Sender, messageId: String, date: Date) {
@@ -57,8 +78,9 @@ internal struct Message: MessageType {
         self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
     }
 
-    init(thumbnail: UIImage, sender: Sender, messageId: String, date: Date) {
-        let mediaItem = MockMediaItem(image: thumbnail)
+    init(thumbnail: UIImage, sender: Sender, messageId: String, date: Date, fileUrl : NSURL) {
+        var mediaItem = MockMediaItem(image: thumbnail)
+        mediaItem.fileUrl = fileUrl
         self.init(kind: .video(mediaItem), sender: sender, messageId: messageId, date: date)
     }
 
@@ -69,5 +91,9 @@ internal struct Message: MessageType {
 
     init(emoji: String, sender: Sender, messageId: String, date: Date) {
         self.init(kind: .emoji(emoji), sender: sender, messageId: messageId, date: date)
+    }
+    
+    init(media : MockVideoItem, sender: Sender, messageId: String, date: Date) {
+        self.init(kind: .video(media), sender: sender, messageId: messageId, date: date)
     }
 }

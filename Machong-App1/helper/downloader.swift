@@ -136,6 +136,47 @@ func uploadVideo(video : NSData, chatRoomId : String, view : UIView, completion 
     }
 }
 
+func downloadVideo(videoUrl : String, completion : @escaping(_ isReadyToPlay: Bool, _ videoFileName: String) -> Void) {
+    
+    let videoURL = NSURL(string: videoUrl)
+   
+    
+    let videoFileName = (videoUrl.components(separatedBy: "%").last!).components(separatedBy: "?").first!
+
+    
+    if fileExistPth(path: videoFileName) {
+        // exist
+        
+        completion(true, videoFileName)
+        
+    } else {
+        // not exist
+        let downloadQue = DispatchQueue(label: "videoDownloadQueue")
+        downloadQue.async {
+            let data = NSData(contentsOf: videoURL! as URL)
+            
+            if data != nil {
+                var docURL = getDocumentsURL()
+                
+                docURL = docURL.appendingPathComponent(videoFileName, isDirectory: false)
+                data!.write(to: docURL, atomically: true)
+                
+              
+                DispatchQueue.main.async {
+                    completion(true, videoFileName)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    print("No video in Database")
+                }
+            }
+        }
+        
+    }
+    
+    
+}
+
 //MARK: helper
 
 func fileExistPth(path :String) -> Bool {

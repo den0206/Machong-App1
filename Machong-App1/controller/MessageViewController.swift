@@ -10,6 +10,8 @@ import UIKit
 import MessageKit
 import InputBarAccessoryView
 import FirebaseFirestore
+import AVFoundation
+import AVKit
 
 class MessageViewController: MessagesViewController {
     
@@ -231,10 +233,38 @@ extension MessageViewController : InputBarAccessoryViewDelegate {
     
 }
 
-//MARK: messageCell Delegate
+//MARK: messageCell Delegate (Tap )
 
 extension MessageViewController : MessageCellDelegate {
     
+    func didTapMessage(in cell: MessageCollectionViewCell) {
+        
+        if let indexPath = messagesCollectionView.indexPath(for: cell) {
+            let message = messageLists[indexPath.section]
+            
+            switch message.kind {
+            case .photo(let PhotoItem):
+                print("photo")
+            case .video(let videoItem):
+                if let videoUrl = videoItem.fileUrl {
+                    let player = AVPlayer(url: videoUrl as URL)
+                    let avPlayer = AVPlayerViewController()
+                    
+                    let session = AVAudioSession.sharedInstance()
+                    
+                    try! session.setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
+                    
+                    avPlayer.player = player
+                    
+                    self.present(avPlayer, animated: true) {
+                        avPlayer.player!.play()
+                    }
+                }
+            default:
+                break
+            }
+        }
+    }
 }
 
 //MARK: save & loads Methods
