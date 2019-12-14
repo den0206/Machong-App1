@@ -2,7 +2,7 @@ import Foundation
 import CoreLocation
 import MessageKit
 
-private struct MockLocationItem: LocationItem {
+struct MockLocationItem: LocationItem {
 
     var location: CLLocation
     var size: CGSize
@@ -14,12 +14,13 @@ private struct MockLocationItem: LocationItem {
 }
 
 private struct MockMediaItem: MediaItem {
-
+  
     var url: URL?
     var image: UIImage?
     var placeholderImage: UIImage
     var size: CGSize
-    var fileUrl : NSURL?
+    var fileUrl: NSURL?
+    
 
     init(image: UIImage) {
         self.image = image

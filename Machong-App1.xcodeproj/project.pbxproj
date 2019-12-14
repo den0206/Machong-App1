@@ -10,6 +10,7 @@
 		3A0B74DD239B373D00E7DFD8 /* outGoingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0B74DC239B373D00E7DFD8 /* outGoingMessage.swift */; };
 		3A12839C2392285100A29D9E /* RecentChatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12839B2392285100A29D9E /* RecentChatsTableViewCell.swift */; };
 		3A12839E23922B7100A29D9E /* ChatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12839D23922B7100A29D9E /* ChatsViewController.swift */; };
+		3A1FDA6E23A4911D0047AE1F /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1FDA6D23A4911D0047AE1F /* MapViewController.swift */; };
 		3A203B1323922D6F00347087 /* UsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203B1223922D6F00347087 /* UsersTableViewController.swift */; };
 		3A203B1523922FAC00347087 /* UsersTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203B1423922FAC00347087 /* UsersTableViewCell.swift */; };
 		3A3DB10023939C940060EBD0 /* Recent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3DB0FF23939C940060EBD0 /* Recent.swift */; };
@@ -40,6 +41,7 @@
 		3A0B74DC239B373D00E7DFD8 /* outGoingMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = outGoingMessage.swift; sourceTree = "<group>"; };
 		3A12839B2392285100A29D9E /* RecentChatsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentChatsTableViewCell.swift; sourceTree = "<group>"; };
 		3A12839D23922B7100A29D9E /* ChatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsViewController.swift; sourceTree = "<group>"; };
+		3A1FDA6D23A4911D0047AE1F /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		3A203B1223922D6F00347087 /* UsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersTableViewController.swift; sourceTree = "<group>"; };
 		3A203B1423922FAC00347087 /* UsersTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersTableViewCell.swift; sourceTree = "<group>"; };
 		3A3DB0FF23939C940060EBD0 /* Recent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recent.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				3A12839D23922B7100A29D9E /* ChatsViewController.swift */,
 				3AD335AB2393768B008B20B4 /* ProfileTableViewController.swift */,
 				3A7A2F9E239A75D900EB3BF3 /* MessageViewController.swift */,
+				3A1FDA6D23A4911D0047AE1F /* MapViewController.swift */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 				3AFAED19238FB88F004DA00B /* heplerFunctions.swift in Sources */,
 				3AA1B996238F904400A60FA6 /* FinishRegistrationViewController.swift in Sources */,
 				3AD335AC2393768B008B20B4 /* ProfileTableViewController.swift in Sources */,
+				3A1FDA6E23A4911D0047AE1F /* MapViewController.swift in Sources */,
 				3ACCA6072391FE8B0002E258 /* SettingTableViewController.swift in Sources */,
 				3A3DB10023939C940060EBD0 /* Recent.swift in Sources */,
 				3AFAED14238FB7EE004DA00B /* FUser.swift in Sources */,

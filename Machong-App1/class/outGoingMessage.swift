@@ -39,6 +39,16 @@ class OutGoingMessage {
         
     }
     
+    // location
+    
+    init(message : String ,latitude: NSNumber, longtude : NSNumber, senderId :String,senderName : String,  status :String,
+         type :String) {
+        
+        messageDictionary = NSMutableDictionary(objects: [message, latitude,longtude ,senderId, senderName,
+                                                          status, type], forKeys: [kMESSAGE as NSCopying,kLATITUDE as NSCopying, kLONGITUDE as NSCopying ,kSENDERID as NSCopying, kSENDERNAME as NSCopying,  kSTATUS as NSCopying, kTYPE as NSCopying])
+    }
+    
+    
     
     
     //MARK: functions

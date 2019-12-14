@@ -8,6 +8,7 @@
 
 import Foundation
 import MessageKit
+import CoreLocation
 
 class InComingMessage {
     
@@ -29,6 +30,8 @@ class InComingMessage {
             
         case kVIDEO :
             message = createVideoMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
+        case kLOCATION :
+            message = createLocationMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
         default:
             print("Typeがわかりません")
         }
@@ -146,6 +149,44 @@ class InComingMessage {
             // noimagePalceholder picture Message
             
         }
+        
+    }
+    
+    //MARK: Location Message
+    
+    func createLocationMessage(messageDictionary : NSDictionary, chatRoomId : String) -> Message? {
+
+        let name = messageDictionary[kSENDERNAME] as? String
+        let userid = messageDictionary[kSENDERID] as? String
+        let messageId = messageDictionary[kMESSAGEID] as? String
+        
+        
+        
+        
+        let date : Date!
+        
+        if let created = messageDictionary[kDATE] {
+            if (created as! String).count !=  14 {
+                date = Date()
+            } else {
+                date = dateFormatter().date(from: created as! String)
+            }
+        } else {
+            date = Date()
+        }
+        
+        let lat = messageDictionary[kLATITUDE] as? Double
+        let long = messageDictionary[kLONGITUDE] as? Double
+        
+        let location : CLLocation? = CLLocation(latitude: lat!, longitude: long!)
+        
+        if location != nil {
+            return Message(location: location!, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
+        } else {
+            return nil
+        }
+        
+      
         
     }
 }

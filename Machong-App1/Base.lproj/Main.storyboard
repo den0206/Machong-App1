@@ -857,14 +857,14 @@
                                                     </constraints>
                                                 </view>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="E84-aG-tWp">
-                                                    <rect key="frame" x="229.5" y="2.5" width="164.5" height="60"/>
+                                                    <rect key="frame" x="229.5" y="17.5" width="164.5" height="30"/>
                                                     <state key="normal" image="message"/>
                                                     <connections>
                                                         <action selector="messageButtonPressed:" destination="naM-QQ-GJU" eventType="touchUpInside" id="Cqx-Qg-usO"/>
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UnD-dB-5R3">
-                                                    <rect key="frame" x="20" y="2.5" width="164.5" height="60"/>
+                                                    <rect key="frame" x="20" y="17.5" width="164.5" height="30"/>
                                                     <state key="normal" image="call"/>
                                                     <connections>
                                                         <action selector="callButtonPressed:" destination="naM-QQ-GJU" eventType="touchUpInside" id="ws3-CX-641"/>
@@ -928,6 +928,35 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wde-ad-x6L" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="7465" y="-220"/>
+        </scene>
+        <!--Map View Controller-->
+        <scene sceneID="6Lm-oe-rwQ">
+            <objects>
+                <viewController storyboardIdentifier="mapViewController" id="tKr-N5-goH" customClass="MapViewController" customModule="Machong_App1" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="KbE-pc-nOB">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="iww-vH-dZO">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="iww-vH-dZO" firstAttribute="trailing" secondItem="cJC-e9-BJB" secondAttribute="trailing" id="3Xo-sJ-8i7"/>
+                            <constraint firstItem="iww-vH-dZO" firstAttribute="top" secondItem="cJC-e9-BJB" secondAttribute="top" id="IYm-pg-P9f"/>
+                            <constraint firstItem="iww-vH-dZO" firstAttribute="leading" secondItem="cJC-e9-BJB" secondAttribute="leading" id="SGu-zp-bPx"/>
+                            <constraint firstItem="iww-vH-dZO" firstAttribute="bottom" secondItem="cJC-e9-BJB" secondAttribute="bottom" id="gUp-bf-wC7"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="cJC-e9-BJB"/>
+                    </view>
+                    <connections>
+                        <outlet property="mapView" destination="iww-vH-dZO" id="9QC-Vb-Zwt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5DK-8Q-aOs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8503" y="-214"/>
         </scene>
     </scenes>
     <resources>

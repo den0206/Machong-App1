@@ -41,6 +41,8 @@ class ChatsViewController: UIViewController {
         searchController.dimsBackgroundDuringPresentation = false
         definesPresentationContext = true
         
+        tableView.tableFooterView = UIView()
+        
 
      
     }

@@ -15,6 +15,11 @@ import AVKit
 
 class MessageViewController: MessagesViewController {
     
+    // replace SceneDelegate IOS 13
+    
+    let appdelegate = SceneDelegate.shared?.window?.windowScene?.delegate as! SceneDelegate
+    
+    
     var messageLists : [Message] = []
     
     let refreshController = UIRefreshControl()
@@ -69,6 +74,8 @@ class MessageViewController: MessagesViewController {
         // accesary
         
         configureAccesary()
+        
+        
         
   
     }
@@ -231,6 +238,22 @@ extension MessageViewController : InputBarAccessoryViewDelegate {
     }
     
     
+    func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {
+        
+        if text == "" {
+            
+            // Mic-Button(Right)
+            
+            setAudioButton()
+            
+        } else {
+            messageInputBar.setStackViewItems([messageInputBar.sendButton], forStack: .right, animated: false)
+        }
+    }
+    
+    
+    
+    
 }
 
 //MARK: messageCell Delegate (Tap )
@@ -244,7 +267,9 @@ extension MessageViewController : MessageCellDelegate {
             
             switch message.kind {
             case .photo(let PhotoItem):
+                
                 print("photo")
+                
             case .video(let videoItem):
                 if let videoUrl = videoItem.fileUrl {
                     let player = AVPlayer(url: videoUrl as URL)
@@ -260,11 +285,23 @@ extension MessageViewController : MessageCellDelegate {
                         avPlayer.player!.play()
                     }
                 }
+                
+            case .location(let LocationItem) :
+                
+                
+                let mapView = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(identifier: "mapViewController") as! MapViewController
+                
+                mapView.location = LocationItem.location
+                
+                navigationController?.pushViewController(mapView, animated: true)
+                
+                
             default:
                 break
             }
         }
     }
+    
 }
 
 //MARK: save & loads Methods
@@ -325,12 +362,23 @@ extension MessageViewController {
 
         }
         
+        // Location
         
-        //  FOr only Text (exclude another - Type)
+        if location != nil {
+            let lat : NSNumber = NSNumber(value: appdelegate.coodinate!.latitude)
+            let long : NSNumber = NSNumber(value : appdelegate.coodinate!.longitude)
+            
+            let text = "[\(kLOCATION)]"
+            
+            outgiongMessage = OutGoingMessage(message: text, latitude: lat, longtude: long, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kLOCATION)
+            
+            
+        
+        }
+        
+        //  For Text & Location type Func (exclude another - Type)
         
         outgiongMessage?.sendMessage(chatRoomId: chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: memberIds, memberToPush: membersToPush)
-        
-       
         
     }
     
@@ -608,7 +656,19 @@ extension MessageViewController {
         allPctureMessages.append(link)
     }
     
+    func haveAccessToUserLocation() -> Bool {
+        if appdelegate.locationManger != nil {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    
+    
 }
+
+
 
 //MARK: custiomize Options
 
@@ -616,8 +676,11 @@ extension MessageViewController {
 extension MessageViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
     func configureAccesary() {
+        
+        // Accesary-Button(left)
+        
         let optionItems = InputBarButtonItem(type: .system)
-        optionItems.tintColor = .black
+        optionItems.tintColor = .darkGray
         optionItems.image = #imageLiteral(resourceName: "invite")
         
         optionItems.addTarget(self, action: #selector(showOptions), for: .touchUpInside)
@@ -627,6 +690,11 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
         messageInputBar.setLeftStackViewWidthConstant(to: 50, animated: false)
         
         messageInputBar.setStackViewItems([optionItems], forStack: .left, animated: true)
+        
+        // Mic-BUtton(right)
+        
+        setAudioButton()
+        
         
     }
     
@@ -652,8 +720,11 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
         }
         
         let shareLocation = UIAlertAction(title: "Location", style: .default) { (action) in
-            // Share your Location
-            print("location")
+            
+            if self.haveAccessToUserLocation() {
+                self.sendMessage(text: nil, picture: nil, location: kLOCATION, video: nil, audio: nil)
+            }
+            
         }
         
         let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
@@ -683,8 +754,26 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
         
         sendMessage(text: nil, picture: picture, location: nil, video: video, audio: nil)
         picker.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    func setAudioButton() {
         
-//        messagesCollectionView.reloadData()
-//        messagesCollectionView.scrollToBottom(animated: true)
+        let micItem = InputBarButtonItem(type: .system)
+              micItem.tintColor = .darkGray
+              micItem.image = UIImage(named: "mic")
+              
+              micItem.addTarget(self, action: #selector(audio), for: .touchUpInside)
+
+              micItem.setSize(CGSize(width: 60, height: 30), animated: false)
+              messageInputBar.rightStackView.alignment = .center
+              messageInputBar.setRightStackViewWidthConstant(to: 50, animated: false)
+
+              messageInputBar.setStackViewItems([micItem], forStack: .right, animated: true)
+
+    }
+    
+    @objc func audio() {
+        print("audio")
     }
 }
