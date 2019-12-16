@@ -177,6 +177,88 @@ func downloadVideo(videoUrl : String, completion : @escaping(_ isReadyToPlay: Bo
     
 }
 
+//MARK: For Audio
+
+func uploadAudio(audioPath : String, chatRoomId : String, view : UIView, completion : @escaping(_ audioLink : String?) -> Void) {
+    
+    let ProgressHUD = MBProgressHUD.showAdded(to: view, animated: true)
+    
+    ProgressHUD.mode = .determinateHorizontalBar
+    
+    let dateString = dateFormatter().string(from: Date())
+    let audioFileName = "AudioMessages/" + FUser.currentId() + "/" + chatRoomId + "/" + dateString + ".m4a"
+    let audio = NSData(contentsOfFile: audioPath)
+    
+    let strogeRef = storage.reference(forURL: kFILEREFERENCE).child(audioFileName)
+    var task : StorageUploadTask!
+    
+    task = strogeRef.putData(audio! as Data, metadata: nil, completion: { (metaData, error) in
+        
+        task.removeAllObservers()
+        ProgressHUD.hide(animated: true)
+        
+        if error != nil {
+            print(error!.localizedDescription)
+            return
+        }
+        
+        strogeRef.downloadURL { (url, error) in
+            guard let downloadUrl = url else {
+                completion(nil)
+                return
+            }
+            completion(downloadUrl.absoluteString)
+        }
+    })
+    
+    task.observe(StorageTaskStatus.progress) { (snapshot) in
+           ProgressHUD.progress = Float((snapshot.progress?.completedUnitCount)!) / Float((snapshot.progress?.totalUnitCount)!)
+       }
+    
+}
+
+func downloadAudio(audioUrl : String, completion : @escaping(_ audioFileName: String) -> Void) {
+    
+    let audioURL = NSURL(string: audioUrl)
+    
+    
+    let audioFileName = (audioUrl.components(separatedBy: "%").last!).components(separatedBy: "?").first!
+
+    
+    if fileExistPth(path: audioFileName){
+        // exist
+        
+        completion(audioFileName)
+        
+    } else {
+        // not exist
+        let downloadQue = DispatchQueue(label: "audioDownloadQueue")
+        downloadQue.async {
+            let data = NSData(contentsOf: audioURL! as URL)
+            
+            if data != nil {
+                var docURL = getDocumentsURL()
+                
+                docURL = docURL.appendingPathComponent(audioFileName, isDirectory: false)
+                data!.write(to: docURL, atomically: true)
+                
+                
+                
+                DispatchQueue.main.async {
+                    completion(audioFileName)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    print("No audio in Database")
+                }
+            }
+        }
+        
+    }
+    
+    
+}
+
 //MARK: helper
 
 func fileExistPth(path :String) -> Bool {
@@ -206,6 +288,7 @@ func getDocumentsURL() -> URL {
     return documentUrl!
     
 }
+
 
 func videoThmbnail(video: NSURL) -> UIImage {
     

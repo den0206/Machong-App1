@@ -1,8 +1,11 @@
 import Foundation
 import CoreLocation
 import MessageKit
+import AVFoundation
 
-struct MockLocationItem: LocationItem {
+
+
+private struct MockLocationItem: LocationItem {
 
     var location: CLLocation
     var size: CGSize
@@ -45,6 +48,31 @@ struct MockVideoItem: MediaItem {
     
     
 }
+
+struct MockAudioItem : AudioItem {
+    
+    var duration: Float
+  
+    var fileUrl: NSURL
+    
+    var size: CGSize
+    
+    var audioData : Data?
+    
+    init(fileUrl : NSURL) {
+        self.fileUrl = fileUrl
+     
+        self.size = CGSize(width: 160, height: 35)
+        // compute duration
+        let audioAsset = AVURLAsset(url: fileUrl as URL)
+        self.duration = Float(CMTimeGetSeconds(audioAsset.duration))
+        
+    }
+    
+    
+}
+
+
 
 internal struct Message: MessageType {
     var sender: SenderType
@@ -96,5 +124,9 @@ internal struct Message: MessageType {
     
     init(media : MockVideoItem, sender: Sender, messageId: String, date: Date) {
         self.init(kind: .video(media), sender: sender, messageId: messageId, date: date)
+    }
+    
+    init(audioItem : MockAudioItem , sender: Sender, messageId: String, date: Date) {
+        self.init(kind: .audio(audioItem), sender: sender, messageId: messageId, date: date)
     }
 }

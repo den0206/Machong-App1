@@ -9,6 +9,7 @@
 import UIKit
 import MessageKit
 import InputBarAccessoryView
+import IQAudioRecorderController
 import FirebaseFirestore
 import AVFoundation
 import AVKit
@@ -20,6 +21,9 @@ class MessageViewController: MessagesViewController {
     let appdelegate = SceneDelegate.shared?.window?.windowScene?.delegate as! SceneDelegate
     
     
+    lazy var audioController = BasicAudioController(messageCollectionView: messagesCollectionView)
+
+
     var messageLists : [Message] = []
     
     let refreshController = UIRefreshControl()
@@ -80,6 +84,10 @@ class MessageViewController: MessagesViewController {
   
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        audioController.stopAnyOngoingPlaying()
+    }
     
     
 
@@ -95,6 +103,7 @@ extension MessageViewController : MessagesDataSource {
     
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+     
         return messageLists[indexPath.section]
     }
     
@@ -110,6 +119,8 @@ extension MessageViewController : MessagesDataSource {
         }
         return nil
     }
+    
+
     
 //    // メッセージの上に文字を表示（名前）
 //      func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
@@ -167,8 +178,18 @@ extension MessageViewController : MessagesDisplayDelegate {
         return .bubbleTail(corner, .curved)
     }
     
+   func audioTintColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+    return isFromCurrentSender(message: message) ? .white : UIColor(red: 15/255, green: 135/255, blue: 255/255, alpha: 1.0)
+   }
     
+    func configureAudioCell(_ cell: AudioMessageCell, message: MessageType) {
+        audioController.configureAudioCell(cell, message: message)
+    }
     
+   
+
+    
+   
 }
 
 //MARK: Message LayoutDelagate
@@ -177,30 +198,22 @@ extension MessageViewController : MessagesLayoutDelegate {
 
     
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        if indexPath.section % 3 == 0 { return 16}
-        
-        return 0
+        return 18
+    }
+    
+    func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 17
+    }
+    
+    func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 20
     }
     
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        
         return 16
     }
     
-    func avatarSize(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        
-        return .zero
-    }
     
-    func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        
-        return CGSize(width: 0, height: 8)
-    }
-    
-    func heightForLocation(message: MessageType, at indexPath: IndexPath, with maxWidth: CGFloat, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-
-        return 0
-    }
 
 
     
@@ -221,28 +234,13 @@ extension MessageViewController : InputBarAccessoryViewDelegate {
         
         // after Sending Animation
         
-        messageInputBar.inputTextView.text = String()
-        messageInputBar.invalidatePlugins()
-        
-        messageInputBar.sendButton.startAnimating()
-        messageInputBar.inputTextView.placeholder = "Sending..."
-        DispatchQueue.global(qos: .default).async {
-            // fake send request task
-            sleep(1)
-            DispatchQueue.main.async { [weak self] in
-                self?.messageInputBar.sendButton.stopAnimating()
-                self?.messageInputBar.inputTextView.placeholder = "Aa"
-                self?.messagesCollectionView.scrollToBottom(animated: true)
-            }
-        }
+        sendToFinish()
     }
     
     
     func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {
         
         if text == "" {
-            
-            // Mic-Button(Right)
             
             setAudioButton()
             
@@ -295,10 +293,37 @@ extension MessageViewController : MessageCellDelegate {
                 
                 navigationController?.pushViewController(mapView, animated: true)
                 
+            case .audio(let audioItem) :
+                print("audio")
                 
             default:
                 break
             }
+        }
+    }
+    
+    func didTapPlayButton(in cell: AudioMessageCell) {
+        guard let indexPath = messagesCollectionView.indexPath(for: cell),
+            let message = messagesCollectionView.messagesDataSource?.messageForItem(at: indexPath, in: messagesCollectionView) else {
+                print("Failed to identify message when audio cell receive tap gesture")
+                return
+        }
+        guard audioController.state != .stopped else {
+            // There is no audio sound playing - prepare to start playing for given audio message
+            audioController.playSound(for: message, in: cell)
+            return
+        }
+        if audioController.playingMessage?.messageId == message.messageId {
+            // tap occur in the current cell that is playing audio sound
+            if audioController.state == .playing {
+                audioController.pauseSound(for: message, in: cell)
+            } else {
+                audioController.resumeSound()
+            }
+        } else {
+            // tap occur in a difference cell that the one is currently playing sound. First stop currently playing and start the sound for given message
+            audioController.stopAnyOngoingPlaying()
+            audioController.playSound(for: message, in: cell)
         }
     }
     
@@ -334,6 +359,8 @@ extension MessageViewController {
                     
                     outgiongMessage?.sendMessage(chatRoomId: self.chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: self.memberIds, memberToPush: self.membersToPush)
                     
+                    self.sendToFinish()
+                    
                 }
                 
             }
@@ -356,11 +383,36 @@ extension MessageViewController {
                     outgiongMessage = OutGoingMessage(message: text, videoLink: videoLink!, thumbnail: dataThumbnail! as NSData, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kVIDEO)
                     
                     outgiongMessage?.sendMessage(chatRoomId: self.chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: self.memberIds, memberToPush: self.membersToPush)
+                    
+                    self.sendToFinish()
                 }
             }
             return
 
         }
+        
+        // Audio
+        
+        if let audioPath = audio {
+            
+            uploadAudio(audioPath: audioPath, chatRoomId: chatRoomId, view: self.navigationController!.view) { (audioLink) in
+                
+                if audioLink != nil {
+                    
+                    let text = "[\(kAUDIO)]"
+                    
+                    outgiongMessage = OutGoingMessage(message: text, audioLink: audioLink!, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kAUDIO)
+                    
+                    
+                    outgiongMessage?.sendMessage(chatRoomId: self.chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: self.memberIds, memberToPush: self.membersToPush)
+                    
+                    self.sendToFinish()
+                    self.messagesCollectionView.reloadData()
+                }
+            }
+            return
+        }
+        
         
         // Location
         
@@ -372,9 +424,11 @@ extension MessageViewController {
             
             outgiongMessage = OutGoingMessage(message: text, latitude: lat, longtude: long, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kLOCATION)
             
-            
+             self.sendToFinish()
         
         }
+        
+       
         
         //  For Text & Location type Func (exclude another - Type)
         
@@ -463,7 +517,7 @@ extension MessageViewController {
                                 }
                                 
                                 self.messagesCollectionView.reloadData()
-                                self.messagesCollectionView.scrollToBottom()
+//                                self.messagesCollectionView.scrollToBottom()
                             }
                         }
                     }
@@ -498,12 +552,18 @@ extension MessageViewController {
     func insertInitialMessages(messageDictionary : NSDictionary) -> Bool {
         
         let inComingMessage =  InComingMessage(collectionView_: self.messagesCollectionView)
+//        let audioController = BasicAudioController(messageCollectionView: inComingMessage.collectionView)
         
         if messageDictionary[kSENDERID] as! String != FUser.currentId() {
             OutGoingMessage.updateMessage(withId: messageDictionary[kMESSAGEID] as! String, chatRoomId: chatRoomId, memberIds: memberIds)
         }
         
+//
+        
+        
         let message = inComingMessage.createMessage(messageDictionary: messageDictionary, chatRoomID: chatRoomId)
+        
+        
         
         if message != nil {
             messageLists.append(message!)
@@ -530,7 +590,6 @@ extension MessageViewController {
                 self.loadedMessages = self.removeBadMessage(allMessages: sorted) + self.loadedMessages
                 
                 self.getPicturesMessages()
-                print(self.allPctureMessages.count)
                
                 self.maxMessageNumber = self.loadedMessages.count - self.loadedMessageCount - 1
                 self.minimumMessageNumber = self.maxMessageNumber - kNUMBEROFMESSAGES
@@ -594,10 +653,23 @@ extension MessageViewController {
             
         }
     }
-    
-    
-    
+}
 
+//MARK: IQAudio Delegate
+
+
+extension MessageViewController : IQAudioRecorderViewControllerDelegate {
+    func audioRecorderController(_ controller: IQAudioRecorderViewController, didFinishWithAudioAtPath filePath: String) {
+        
+        controller.dismiss(animated: true, completion: nil)
+        self.sendMessage(text: nil, picture: nil, location: nil, video: nil, audio: filePath)
+    }
+    
+    func audioRecorderControllerDidCancel(_ controller: IQAudioRecorderViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    
 }
 
 //MARK: helper
@@ -663,7 +735,23 @@ extension MessageViewController {
             return false
         }
     }
-
+    
+    func sendToFinish() {
+        messageInputBar.inputTextView.text = String()
+        messageInputBar.invalidatePlugins()
+        
+        messageInputBar.sendButton.startAnimating()
+        messageInputBar.inputTextView.placeholder = "Sending..."
+        DispatchQueue.global(qos: .default).async {
+            // fake send request task
+            sleep(1)
+            DispatchQueue.main.async { [weak self] in
+                self?.messageInputBar.sendButton.stopAnimating()
+                self?.messageInputBar.inputTextView.placeholder = "Aa"
+                self?.messagesCollectionView.scrollToBottom(animated: true)
+            }
+        }
+    }
     
     
 }
@@ -774,6 +862,7 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
     }
     
     @objc func audio() {
-        print("audio")
+        let audioVC = AudioViewController(delegate_: self)
+        audioVC.presentAUdioRecorder(target: self)
     }
 }

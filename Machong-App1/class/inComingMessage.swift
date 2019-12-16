@@ -9,6 +9,7 @@
 import Foundation
 import MessageKit
 import CoreLocation
+import AVFoundation
 
 class InComingMessage {
     
@@ -17,6 +18,8 @@ class InComingMessage {
     init(collectionView_ : MessagesCollectionView ) {
         collectionView = collectionView_
     }
+    
+    
     
     func createMessage(messageDictionary : NSDictionary, chatRoomID : String) -> Message? {
         var message : Message?
@@ -32,6 +35,10 @@ class InComingMessage {
             message = createVideoMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
         case kLOCATION :
             message = createLocationMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
+            
+        case kAUDIO :
+            message = createAudioMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
+           
         default:
             print("Typeがわかりません")
         }
@@ -150,6 +157,49 @@ class InComingMessage {
             
         }
         
+    }
+    
+    func createAudioMessage(messageDictionary : NSDictionary, chatRoomId : String) -> Message {
+
+        let name = messageDictionary[kSENDERNAME] as? String
+        let userid = messageDictionary[kSENDERID] as? String
+        let messageId = messageDictionary[kMESSAGEID] as? String
+
+
+        let date : Date!
+
+        if let created = messageDictionary[kDATE] {
+            if (created as! String).count !=  14 {
+                date = Date()
+            } else {
+                date = dateFormatter().date(from: created as! String)
+            }
+        } else {
+            date = Date()
+        }
+        
+        let audioUrl = NSURL(fileURLWithPath: messageDictionary[kAUDIO] as! String)
+        var audioItem = MockAudioItem(fileUrl: audioUrl)
+        
+        
+        
+        downloadAudio(audioUrl: messageDictionary[kAUDIO] as! String) { (audioLink) in
+            let url = NSURL(fileURLWithPath: fileInDocumentsDirectry(filename: audioLink))
+            audioItem.fileUrl = url
+//            let audioAsset = AVURLAsset(url: audioItem.url)
+//            audioItem.duration = Float(CMTimeGetSeconds(audioAsset.duration))
+            
+            let audioData = try? Data(contentsOf: url as URL)
+            audioItem.audioData = audioData!
+            
+        }
+        
+        
+        
+        return Message(audioItem: audioItem, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
+
+
+
     }
     
     //MARK: Location Message
