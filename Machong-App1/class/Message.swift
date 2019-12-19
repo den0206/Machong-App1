@@ -16,13 +16,16 @@ private struct MockLocationItem: LocationItem {
     }
 }
 
-private struct MockMediaItem: MediaItem {
+struct MockMediaItem: MediaItem {
+   
+    
   
     var url: URL?
     var image: UIImage?
     var placeholderImage: UIImage
     var size: CGSize
     var fileUrl: NSURL?
+   
     
 
     init(image: UIImage) {
@@ -39,11 +42,20 @@ struct MockVideoItem: MediaItem {
     var placeholderImage: UIImage
     var size: CGSize
     var fileUrl : NSURL?
-
+    
+    init(withFileUrl : NSURL, thumbnail : UIImage) {
+       self.fileUrl = withFileUrl
+       self.size = CGSize(width: 240, height: 240)
+       self.placeholderImage = UIImage()
+        self.image = thumbnail
+    
+   }
+    
     init(withFileUrl : NSURL) {
         self.fileUrl = withFileUrl
         self.size = CGSize(width: 240, height: 240)
         self.placeholderImage = UIImage()
+     
     }
     
     
@@ -66,6 +78,8 @@ struct MockAudioItem : AudioItem {
         // compute duration
         let audioAsset = AVURLAsset(url: fileUrl as URL)
         self.duration = Float(CMTimeGetSeconds(audioAsset.duration))
+        
+
         
     }
     
@@ -102,9 +116,8 @@ internal struct Message: MessageType {
         self.init(kind: .attributedText(attributedText), sender: sender, messageId: messageId, date: date)
     }
 
-    init(image: UIImage, sender: Sender, messageId: String, date: Date) {
-        let mediaItem = MockMediaItem(image: image)
-        self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
+    init(media : MockMediaItem, sender: Sender, messageId: String, date: Date) {
+        self.init(kind: .photo(media), sender: sender, messageId: messageId, date: date)
     }
 
     init(thumbnail: UIImage, sender: Sender, messageId: String, date: Date, fileUrl : NSURL) {
@@ -130,3 +143,4 @@ internal struct Message: MessageType {
         self.init(kind: .audio(audioItem), sender: sender, messageId: messageId, date: date)
     }
 }
+

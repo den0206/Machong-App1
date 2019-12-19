@@ -100,9 +100,23 @@ open class BasicAudioController: NSObject, AVAudioPlayerDelegate {
     ///   - audioCell: The `AudioMessageCell` that needs to be updated while audio is playing.
     open func playSound(for message: MessageType, in audioCell: AudioMessageCell) {
         switch message.kind {
-        case .audio(let item):
+        case .audio(var item):
             playingCell = audioCell
             playingMessage = message
+            
+            // initialize audiodata
+            
+            if item.audioData == nil {
+                downloadAudio(audioUrl: item.fileUrl.path!) { (audioLink) in
+                    let url = NSURL(fileURLWithPath: fileInDocumentsDirectry(filename: audioLink))
+                    
+                    let audioData = try? Data(contentsOf: url as URL)
+                    item.audioData = audioData!
+                   
+                }
+            }
+            //
+            
             guard let player = try? AVAudioPlayer(data: item.audioData!) else {
                 print("Failed to create audio player for URL: \(item.audioData)")
                 return
@@ -212,4 +226,5 @@ open class BasicAudioController: NSObject, AVAudioPlayerDelegate {
     }
 
 }
+
 

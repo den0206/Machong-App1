@@ -33,11 +33,13 @@ class InComingMessage {
             
         case kVIDEO :
             message = createVideoMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
+            self.collectionView.reloadData()
         case kLOCATION :
             message = createLocationMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
             
         case kAUDIO :
             message = createAudioMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
+            self.collectionView.reloadData()
            
         default:
             print("Typeがわかりません")
@@ -98,10 +100,14 @@ class InComingMessage {
             
         }
         
+        
         let image = downLoadImage(imageUrl: messageDictionary[kPICTURE] as! String)
+        var imageItem = MockMediaItem(image: image!)
+        
+        imageItem.fileUrl  = messageDictionary[kPICTURE] as? NSURL
         
         if image != nil {
-            return Message(image: image!, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
+            return Message(media: imageItem, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
         } else {
             print("写真が見つかりません")
             
@@ -135,16 +141,22 @@ class InComingMessage {
         }
         
         let videoURL = NSURL(fileURLWithPath: messageDictionary[kVIDEO] as! String)
-        var videoItem = MockVideoItem(withFileUrl: videoURL)
+        let thumbnail = downloadImageFromData(pictureData: messageDictionary[kPICTURE] as! String)
         
+        var videoItem = MockVideoItem(withFileUrl: videoURL, thumbnail: thumbnail!)
+   
         downloadVideo(videoUrl: messageDictionary[kVIDEO] as! String) { (isRadyToPlay, filename) in
             
             let url = NSURL(fileURLWithPath: fileInDocumentsDirectry(filename: filename))
             videoItem.fileUrl = url
             
             imageFromData(pictureData: messageDictionary[kPICTURE] as! String) { (image) in
-                videoItem.image = image
+                if image != nil {
+                     videoItem.image = image
+                }
+                self.collectionView.reloadData()
             }
+            self.collectionView.reloadData()
         }
         
         if videoItem.fileUrl != nil && videoItem.image != nil {
@@ -186,12 +198,11 @@ class InComingMessage {
         downloadAudio(audioUrl: messageDictionary[kAUDIO] as! String) { (audioLink) in
             let url = NSURL(fileURLWithPath: fileInDocumentsDirectry(filename: audioLink))
             audioItem.fileUrl = url
-//            let audioAsset = AVURLAsset(url: audioItem.url)
-//            audioItem.duration = Float(CMTimeGetSeconds(audioAsset.duration))
+
             
             let audioData = try? Data(contentsOf: url as URL)
             audioItem.audioData = audioData!
-            
+           
         }
         
         
@@ -240,3 +251,4 @@ class InComingMessage {
         
     }
 }
+

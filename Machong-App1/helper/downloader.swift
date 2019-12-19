@@ -161,7 +161,7 @@ func downloadVideo(videoUrl : String, completion : @escaping(_ isReadyToPlay: Bo
                 docURL = docURL.appendingPathComponent(videoFileName, isDirectory: false)
                 data!.write(to: docURL, atomically: true)
                 
-              
+                
                 DispatchQueue.main.async {
                     completion(true, videoFileName)
                 }
@@ -259,6 +259,8 @@ func downloadAudio(audioUrl : String, completion : @escaping(_ audioFileName: St
     
 }
 
+
+
 //MARK: helper
 
 func fileExistPth(path :String) -> Bool {
@@ -312,5 +314,6 @@ func videoThmbnail(video: NSURL) -> UIImage {
     
     return thunmbnail
 }
+
 
 

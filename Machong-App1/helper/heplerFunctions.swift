@@ -36,6 +36,57 @@ func imageFromData(pictureData: String, withBlock: (_ image: UIImage?) -> Void) 
     withBlock(image)
 }
 
+func downloadImageFromData(pictureData: String) -> UIImage? {
+    
+    let imageFileName = (pictureData.components(separatedBy: "%").last!).components(separatedBy: "?").first!
+    
+    
+    if fileExistPth(path: imageFileName) {
+         print("あ")
+        if let comtentsOfFile = UIImage(contentsOfFile: fileInDocumentsDirectry(filename: imageFileName)) {
+            
+           
+            return comtentsOfFile
+        } else {
+            print("couldnt generateimage")
+            return nil
+        }
+    } else {
+        //        let data = NSData(contentsOf: imageURL! as URL)
+       let data = NSData(base64Encoded: imageFileName, options: NSData.Base64DecodingOptions(rawValue: 0))
+        
+        if data != nil {
+            var docURL = getDocumentsURL()
+            
+            docURL = docURL.appendingPathComponent(imageFileName, isDirectory: false)
+            data!.write(to: docURL, atomically: true)
+            
+            let imageToReturn = UIImage(data: data! as Data)
+            return imageToReturn
+            
+        } else {
+            
+            print("No image in Database")
+            return nil
+            
+        }
+        
+    }
+    
+//    var image: UIImage?
+//
+//    let decodedData = NSData(base64Encoded: pictureData, options: NSData.Base64DecodingOptions(rawValue: 0))
+//
+//    image = UIImage(data: decodedData! as Data)
+//
+//    if image == nil {
+//       print("notoData")
+//        return nil
+//    }
+//
+//    return image!
+}
+
 //for avatars
 func dataImageFromString(pictureString: String, withBlock: (_ image: Data?) -> Void) {
     
@@ -191,6 +242,7 @@ func imageFromInitials(firstName: String?, lastName: String?, withBlock: @escapi
     
     withBlock(img!)
 }
+
 
 
 

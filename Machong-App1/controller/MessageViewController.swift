@@ -22,7 +22,8 @@ class MessageViewController: MessagesViewController {
     
     
     lazy var audioController = BasicAudioController(messageCollectionView: messagesCollectionView)
-
+    
+//    lazy var inComingMessage =  InComingMessage(collectionView_: self.messagesCollectionView)
 
     var messageLists : [Message] = []
     
@@ -66,6 +67,8 @@ class MessageViewController: MessagesViewController {
         messageInputBar.sendButton.tintColor = .lightGray
         
         loadMessage()
+        
+        
         
         // refresh Controll
         configureRefreshController()
@@ -186,7 +189,18 @@ extension MessageViewController : MessagesDisplayDelegate {
         audioController.configureAudioCell(cell, message: message)
     }
     
-   
+//    func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+//
+//        switch message.kind {
+//        case .video(let video) :
+//            let thumb = imageFromData(pictureData: video.thumbData!) { (image) in
+//                video.image = image
+//                }
+//        default:
+//            break
+//        }
+//    }
+
 
     
    
@@ -339,6 +353,7 @@ extension MessageViewController {
         
         var outgiongMessage : OutGoingMessage?
         let currentUser = FUser.currentUser()!
+
         
         // text
         
@@ -354,8 +369,6 @@ extension MessageViewController {
                     let text = "[\(kPICTURE)]"
                     
                     outgiongMessage = OutGoingMessage(message: text, pictureLink: imageLink!, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kPICTURE)
-                    
-//                    self.messagesCollectionView.reloadData()
                     
                     outgiongMessage?.sendMessage(chatRoomId: self.chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: self.memberIds, memberToPush: self.membersToPush)
                     
@@ -407,9 +420,11 @@ extension MessageViewController {
                     outgiongMessage?.sendMessage(chatRoomId: self.chatRoomId, messageDictionary: outgiongMessage!.messageDictionary, membersId: self.memberIds, memberToPush: self.membersToPush)
                     
                     self.sendToFinish()
-                    self.messagesCollectionView.reloadData()
+                    
                 }
+  
             }
+            
             return
         }
         
@@ -417,18 +432,21 @@ extension MessageViewController {
         // Location
         
         if location != nil {
-            let lat : NSNumber = NSNumber(value: appdelegate.coodinate!.latitude)
-            let long : NSNumber = NSNumber(value : appdelegate.coodinate!.longitude)
-            
-            let text = "[\(kLOCATION)]"
-            
-            outgiongMessage = OutGoingMessage(message: text, latitude: lat, longtude: long, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kLOCATION)
-            
-             self.sendToFinish()
-        
+            if appdelegate.coodinate != nil {
+                let lat : NSNumber = NSNumber(value: appdelegate.coodinate!.latitude)
+                let long : NSNumber = NSNumber(value : appdelegate.coodinate!.longitude)
+                
+                let text = "[\(kLOCATION)]"
+                
+                outgiongMessage = OutGoingMessage(message: text, latitude: lat, longtude: long, senderId: currentUser.objectId, senderName: currentUser.firstname, status: kDELIVERED, type: kLOCATION)
+                
+                sendToFinish()
+                
+                
+            }
         }
         
-       
+        
         
         //  For Text & Location type Func (exclude another - Type)
         
@@ -476,6 +494,7 @@ extension MessageViewController {
             
             self.listenForNewChat()
             
+            print(self.messageLists.count)
     
         }
     }
@@ -485,6 +504,7 @@ extension MessageViewController {
     func listenForNewChat() {
         
         var lastMessageDate = "0"
+     
         
         if loadedMessages.count > 0 {
             lastMessageDate = loadedMessages.last![kDATE] as! String
@@ -498,6 +518,7 @@ extension MessageViewController {
                 
                 for diff in snapshot.documentChanges {
                     if diff.type == .added {
+                        
                         
                         let itm = diff.document.data() as NSDictionary
                         
@@ -517,7 +538,7 @@ extension MessageViewController {
                                 }
                                 
                                 self.messagesCollectionView.reloadData()
-//                                self.messagesCollectionView.scrollToBottom()
+                               
                             }
                         }
                     }
@@ -552,22 +573,33 @@ extension MessageViewController {
     func insertInitialMessages(messageDictionary : NSDictionary) -> Bool {
         
         let inComingMessage =  InComingMessage(collectionView_: self.messagesCollectionView)
-//        let audioController = BasicAudioController(messageCollectionView: inComingMessage.collectionView)
+
         
         if messageDictionary[kSENDERID] as! String != FUser.currentId() {
             OutGoingMessage.updateMessage(withId: messageDictionary[kMESSAGEID] as! String, chatRoomId: chatRoomId, memberIds: memberIds)
         }
         
-//
-        
-        
+
         let message = inComingMessage.createMessage(messageDictionary: messageDictionary, chatRoomID: chatRoomId)
-        
+    
         
         
         if message != nil {
             messageLists.append(message!)
+            
+//            messagesCollectionView.performBatchUpdates({
+//                messagesCollectionView.insertSections([messageLists.count - 1])
+//                if messageLists.count >= 2 {
+//                    messagesCollectionView.reloadSections([messageLists.count - 2])
+//                }
+//            }, completion: { [weak self] _ in
+//                if self?.isLastsectionVisible() == true {
+//                    self?.messagesCollectionView.scrollToBottom(animated: true)
+//                }
+//            })
         }
+        
+
         
         return isInComing(messageDictionary: messageDictionary)
         
@@ -627,6 +659,8 @@ extension MessageViewController {
         let inComingMessage = InComingMessage(collectionView_: self.messagesCollectionView)
         
         let message = inComingMessage.createMessage(messageDictionary: messageDictionary, chatRoomID: chatRoomId)
+        
+     
         
         messageLists.insert(message!, at: 0)
     }
@@ -752,7 +786,7 @@ extension MessageViewController {
             }
         }
     }
-    
+
     
 }
 
@@ -866,3 +900,4 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
         audioVC.presentAUdioRecorder(target: self)
     }
 }
+
