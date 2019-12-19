@@ -65,6 +65,17 @@ class MessageViewController: MessagesViewController {
         
         messageInputBar.delegate = self
         messageInputBar.sendButton.tintColor = .lightGray
+        messageInputBar.backgroundView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+        messageInputBar.inputTextView.backgroundColor = .white
+        
+        
+        messagesCollectionView.backgroundColor? = UIColor(patternImage: UIImage(named: "bg0")!)
+        self.navigationController?.navigationBar.barTintColor =  UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        self.navigationController?.navigationBar.tintColor = .black
+       
+//        messageInputBar.inputTextView.tintColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+//        messageInputBar.sendButton.setTitleColor(.purple, for: .normal)
+        
         
         loadMessage()
         
@@ -872,7 +883,7 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         let video = info[UIImagePickerController.InfoKey.mediaURL] as? NSURL
-        let picture = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        let picture = info[.originalImage] as? UIImage
         
         sendMessage(text: nil, picture: picture, location: nil, video: video, audio: nil)
         picker.dismiss(animated: true, completion: nil)
@@ -898,6 +909,27 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
     @objc func audio() {
         let audioVC = AudioViewController(delegate_: self)
         audioVC.presentAUdioRecorder(target: self)
+    }
+}
+
+extension UIView {
+    func addBackground(name: String) {
+        // スクリーンサイズの取得
+        let width = UIScreen.main.bounds.size.width
+        let height = UIScreen.main.bounds.size.height
+
+        // スクリーンサイズにあわせてimageViewの配置
+        let imageViewBackground = UIImageView(frame: CGRect(x: 0, y: 0, width: width, height: height))
+        //imageViewに背景画像を表示
+        imageViewBackground.image = UIImage(named: name)
+
+        // 画像の表示モードを変更。
+        imageViewBackground.contentMode = UIView.ContentMode.scaleAspectFill
+
+        // subviewをメインビューに追加
+        self.addSubview(imageViewBackground)
+        // 加えたsubviewを、最背面に設置する
+        self.sendSubviewToBack(imageViewBackground)
     }
 }
 

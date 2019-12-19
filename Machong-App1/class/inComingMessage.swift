@@ -30,7 +30,7 @@ class InComingMessage {
             message = creatTextMessage(messageDictionay: messageDictionary, chatRoomId: chatRoomID)
         case kPICTURE :
             message = createPictureMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
-            
+            self.collectionView.reloadData()
         case kVIDEO :
             message = createVideoMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
             self.collectionView.reloadData()
@@ -101,23 +101,22 @@ class InComingMessage {
         }
         
         
-        let image = downLoadImage(imageUrl: messageDictionary[kPICTURE] as! String)
-        var imageItem = MockMediaItem(image: image!)
         
-        imageItem.fileUrl  = messageDictionary[kPICTURE] as? NSURL
+        let image = downLoadImage(imageUrl: messageDictionary[kPICTURE] as! String)
         
         if image != nil {
-            return Message(media: imageItem, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
+            return Message(image: image!, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
         } else {
             print("写真が見つかりません")
             
             // noimagePalceholder picture Message
             
-//            let errorPicture = UIImage(named: "error")
-//            return Message(image: errorPicture, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
+            //            let errorPicture = UIImage(named: "error")
+            //            return Message(image: errorPicture, sender: Sender(senderId: userid!, displayName: name!), messageId: messageId!, date: date)
             return nil
         }
-
+        
+        
     }
     
     //MARK: Video Message

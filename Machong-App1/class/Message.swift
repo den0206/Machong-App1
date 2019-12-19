@@ -116,8 +116,13 @@ internal struct Message: MessageType {
         self.init(kind: .attributedText(attributedText), sender: sender, messageId: messageId, date: date)
     }
 
-    init(media : MockMediaItem, sender: Sender, messageId: String, date: Date) {
-        self.init(kind: .photo(media), sender: sender, messageId: messageId, date: date)
+//    init(media : MockMediaItem, sender: Sender, messageId: String, date: Date) {
+//        self.init(kind: .photo(media), sender: sender, messageId: messageId, date: date)
+//    }
+    
+    init(image: UIImage, sender: Sender , messageId: String, date: Date) {
+        let mediaItem = MockMediaItem(image: image)
+        self.init(kind: .photo(mediaItem), sender: sender, messageId: messageId, date: date)
     }
 
     init(thumbnail: UIImage, sender: Sender, messageId: String, date: Date, fileUrl : NSURL) {
