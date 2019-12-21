@@ -31,6 +31,7 @@ class InComingMessage {
         case kPICTURE :
             message = createPictureMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
             self.collectionView.reloadData()
+            
         case kVIDEO :
             message = createVideoMessage(messageDictionary: messageDictionary, chatRoomId: chatRoomID)
             self.collectionView.reloadData()
@@ -56,6 +57,8 @@ class InComingMessage {
     //MARK: Text Message
     
     func creatTextMessage(messageDictionay : NSDictionary, chatRoomId : String ) -> Message {
+        
+        
         
         let name = messageDictionay[kSENDERNAME] as? String
         let userid = messageDictionay[kSENDERID] as? String

@@ -134,7 +134,7 @@ func updateRecent(chatRoomId : String, lastMessage : String) {
                 let currentRecent = recent.data() as NSDictionary
                 
                 if currentRecent[kUSERID] as? String == FUser.currentId() {
-                    
+                    updateRecentItem(recent: currentRecent, lastMessage: lastMessage)
                 }
                 
             }

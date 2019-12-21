@@ -46,6 +46,11 @@ class MessageViewController: MessagesViewController {
     var loadedMessages : [NSDictionary] = []
     var allPctureMessages : [String] = []
     
+    var showAvatars =  true
+    
+    var avatarItems : NSMutableDictionary?
+    var avatarImageDictionary : NSMutableDictionary?
+    
     var withUsers : [FUser] = []
     
 //    deinit {
@@ -71,15 +76,19 @@ class MessageViewController: MessagesViewController {
         
         messagesCollectionView.backgroundColor? = UIColor(patternImage: UIImage(named: "bg0")!)
         self.navigationController?.navigationBar.barTintColor =  UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
-        self.navigationController?.navigationBar.tintColor = .black
-       
-//        messageInputBar.inputTextView.tintColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
-//        messageInputBar.sendButton.setTitleColor(.purple, for: .normal)
+        self.navigationController?.navigationBar.tintColor = .darkGray
+        
+        self.avatarItems = [:]
+        
+        print(currentSender())
+        
+        setCustomTitle()
         
         
         loadMessage()
         
         
+    
         
         // refresh Controll
         configureRefreshController()
@@ -149,21 +158,21 @@ extension MessageViewController : MessagesDataSource {
       }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
+    
+        let message = messageLists[indexPath.section]
+        var avatar : Avatar
         
-        if isFromCurrentSender(message: message) {
+        if avatarItems != nil {
             
-            getUsersFromFirestore(withIds: memberIds) { (withUsers) in
+            if let avatarData = avatarItems?.object(forKey: message.sender.senderId) {
                 
-                self.withUsers = withUsers
-                
-                let withUser = withUsers.last!
-                
-                imageFromData(pictureData: withUser.avatar) { (avatar) in
-                    
-                    let avatar = Avatar(image: avatar, initials: "?")
-                    avatarView.set(avatar: avatar)
-                }
+                avatar = avatarData as! Avatar
+                avatarView.set(avatar: avatar)
             }
+            
+        } else {
+            avatar = Avatar(image: UIImage(named: "avatarPlaceholder") , initials: "?")
+            avatarView.set(avatar: avatar)
         }
     }
     
@@ -505,7 +514,6 @@ extension MessageViewController {
             
             self.listenForNewChat()
             
-            print(self.messageLists.count)
     
         }
     }
@@ -597,6 +605,7 @@ extension MessageViewController {
         
         if message != nil {
             messageLists.append(message!)
+            print(message)
             
 //            messagesCollectionView.performBatchUpdates({
 //                messagesCollectionView.insertSections([messageLists.count - 1])
@@ -717,6 +726,7 @@ extension MessageViewController : IQAudioRecorderViewControllerDelegate {
     
 }
 
+
 //MARK: helper
 
 extension MessageViewController {
@@ -780,24 +790,95 @@ extension MessageViewController {
             return false
         }
     }
-    
     func sendToFinish() {
-        messageInputBar.inputTextView.text = String()
-        messageInputBar.invalidatePlugins()
+           messageInputBar.inputTextView.text = String()
+           messageInputBar.invalidatePlugins()
+           
+           messageInputBar.sendButton.startAnimating()
+           messageInputBar.inputTextView.placeholder = "Sending..."
+           DispatchQueue.global(qos: .default).async {
+               // fake send request task
+               sleep(1)
+               DispatchQueue.main.async { [weak self] in
+                   self?.messageInputBar.sendButton.stopAnimating()
+                   self?.messageInputBar.inputTextView.placeholder = "Aa"
+                   self?.messagesCollectionView.scrollToBottom(animated: true)
+               }
+           }
+       }
+    
+    
+    
+    //MARK: Get Avatars
+
+    func setCustomTitle() {
         
-        messageInputBar.sendButton.startAnimating()
-        messageInputBar.inputTextView.placeholder = "Sending..."
-        DispatchQueue.global(qos: .default).async {
-            // fake send request task
-            sleep(1)
-            DispatchQueue.main.async { [weak self] in
-                self?.messageInputBar.sendButton.stopAnimating()
-                self?.messageInputBar.inputTextView.placeholder = "Aa"
-                self?.messagesCollectionView.scrollToBottom(animated: true)
+        getUsersFromFirestore(withIds: memberIds) { (withuser) in
+            // exclude currentUser
+            
+            self.withUsers = withuser
+            self.getAvatarImages()
+            
+        }
+        
+    }
+    
+    func getAvatarImages() {
+        
+        if showAvatars {
+            
+            // get currentUser avatar
+            avatarImageFrom(fuser: FUser.currentUser()!)
+            
+            // get withUser avatar
+            
+            for user in withUsers {
+                avatarImageFrom(fuser: user)
+            }
+            
+        }
+        
+    }
+    
+    func avatarImageFrom(fuser : FUser) {
+        
+        if fuser.avatar != "" {
+            dataImageFromString(pictureString: fuser.avatar) { (imageData) in
+                
+                if imageData == nil {
+                    return
+                }
+                
+                if avatarImageDictionary != nil {
+                    self.avatarImageDictionary?.removeObject(forKey: fuser.objectId)
+                    self.avatarImageDictionary?.setObject(imageData!, forKey: fuser.objectId as NSCopying)
+                } else {
+                    self.avatarImageDictionary = [fuser.objectId : imageData!]
+                }
+                
+                self.createAvatarItem(avatarDictionary: self.avatarImageDictionary)
             }
         }
     }
-
+    
+    func createAvatarItem(avatarDictionary : NSMutableDictionary?) {
+        
+        let dafaultAvatar = Avatar(image: UIImage(named: "avatarPlaceholder") , initials: "?")
+        
+        if avatarDictionary != nil {
+            for userId in memberIds {
+                if let avataImageData = avatarDictionary![userId] {
+                    let avatarItem = Avatar(image: UIImage(data: avataImageData as! Data), initials: "?")
+                    
+                    self.avatarItems!.setValue(avatarItem, forKey: userId)
+                } else {
+                    self.avatarItems!.setValue(dafaultAvatar, forKey: userId)
+                }
+            }
+            self.messagesCollectionView.reloadData()
+        }
+        
+    }
     
 }
 
@@ -912,24 +993,4 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
     }
 }
 
-extension UIView {
-    func addBackground(name: String) {
-        // スクリーンサイズの取得
-        let width = UIScreen.main.bounds.size.width
-        let height = UIScreen.main.bounds.size.height
-
-        // スクリーンサイズにあわせてimageViewの配置
-        let imageViewBackground = UIImageView(frame: CGRect(x: 0, y: 0, width: width, height: height))
-        //imageViewに背景画像を表示
-        imageViewBackground.image = UIImage(named: name)
-
-        // 画像の表示モードを変更。
-        imageViewBackground.contentMode = UIView.ContentMode.scaleAspectFill
-
-        // subviewをメインビューに追加
-        self.addSubview(imageViewBackground)
-        // 加えたsubviewを、最背面に設置する
-        self.sendSubviewToBack(imageViewBackground)
-    }
-}
 

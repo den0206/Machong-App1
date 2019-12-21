@@ -60,6 +60,7 @@ class SettingTableViewController: UITableViewController {
         FUser.logOutCurrentUser { (success) in
             
             if success {
+                print("a")
                 self.showWelcomeView()
             }
         }
