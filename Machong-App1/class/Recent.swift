@@ -133,10 +133,13 @@ func updateRecent(chatRoomId : String, lastMessage : String) {
                 
                 let currentRecent = recent.data() as NSDictionary
                 
-                if currentRecent[kUSERID] as? String == FUser.currentId() {
-                    
-                    updateRecentItem(recent: currentRecent, lastMessage: lastMessage)
-                }
+//                if currentRecent[kUSERID] as? String == FUser.currentId() {
+//
+//                    updateRecentItem(recent: currentRecent, lastMessage: lastMessage)
+//                }
+                
+                // update LastMessage
+                updateRecentItem(recent: currentRecent, lastMessage: lastMessage)
                 
             }
         }
@@ -144,13 +147,6 @@ func updateRecent(chatRoomId : String, lastMessage : String) {
     }
 }
 
-func deleteRecentChat(recentChatDictionary : NSDictionary) {
-    if let recentId = recentChatDictionary[kRECENTID] {
-        
-        reference(.Recent).document(recentId as! String).delete()
-    }
-    
-}
 
 func updateRecentItem(recent : NSDictionary, lastMessage : String) {
     
@@ -167,6 +163,14 @@ func updateRecentItem(recent : NSDictionary, lastMessage : String) {
     reference(.Recent).document(recent[kRECENTID] as! String).updateData(values)
     
     
+    
+}
+
+func deleteRecentChat(recentChatDictionary : NSDictionary) {
+    if let recentId = recentChatDictionary[kRECENTID] {
+        
+        reference(.Recent).document(recentId as! String).delete()
+    }
     
 }
 
@@ -190,4 +194,27 @@ func updateExistingRecentWithNewValuies(chatRoomId : String, members: [String], 
 func updateRecent(recentId: String, withValues : [String : Any]) {
     
     reference(.Recent).document(recentId).updateData(withValues)
+}
+
+func clearRecentCounter(chatRoomID : String) {
+    reference(.Recent).whereField(kCHATROOMID, isEqualTo: chatRoomID).getDocuments { (snapshot, error) in
+        
+        guard let snapshot = snapshot else {return}
+        
+        if !snapshot.isEmpty {
+            for recent in snapshot.documents {
+                let currentRecent = recent.data() as NSDictionary
+                
+                if currentRecent[kUSERID] as? String == FUser.currentId() {
+                    clearRcentCounterItem(recent: currentRecent)
+                }
+            }
+        }
+    }
+    
+}
+
+func clearRcentCounterItem(recent : NSDictionary) {
+    reference(.Recent).document(recent[kRECENTID] as! String).updateData([kCOUNTER : 0])
+    
 }

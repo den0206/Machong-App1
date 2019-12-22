@@ -57,6 +57,8 @@ class MessageViewController: MessagesViewController {
     
     var withUsers : [FUser] = []
     
+    let outgoingAvatarOverlap: CGFloat = 17.5
+    
     deinit {
         updatelistner?.remove()
     }
@@ -80,6 +82,7 @@ class MessageViewController: MessagesViewController {
         messageInputBar.backgroundView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         messageInputBar.inputTextView.backgroundColor = .white
         
+      
         
         messagesCollectionView.backgroundColor? = UIColor(patternImage: UIImage(named: "bg0")!)
         self.navigationController?.navigationBar.barTintColor =  UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
@@ -106,8 +109,16 @@ class MessageViewController: MessagesViewController {
         configureAccesary()
         
         
+        let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
+        layout?.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
         
-  
+        // Hide the outgoing avatar and adjust the label alignment to line up with the messages
+        layout?.setMessageOutgoingAvatarSize(.zero)
+        layout?.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+        layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+        
+        
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -115,6 +126,15 @@ class MessageViewController: MessagesViewController {
         audioController.stopAnyOngoingPlaying()
     }
     
+    //MARK: Clear Counter 0
+    
+    override func viewWillAppear(_ animated: Bool) {
+        clearRecentCounter(chatRoomID: chatRoomId)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        clearRecentCounter(chatRoomID: chatRoomId)
+    }
     
 
     
@@ -312,8 +332,12 @@ extension MessageViewController : InputBarAccessoryViewDelegate {
         } else {
             messageInputBar.setStackViewItems([messageInputBar.sendButton], forStack: .right, animated: false)
         }
+        
+        
     }
     
+    
+    //MARK: Typiong Indicator
     
     
     
@@ -959,7 +983,7 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
         
         let optionItems = InputBarButtonItem(type: .system)
         optionItems.tintColor = .darkGray
-        optionItems.image = #imageLiteral(resourceName: "invite")
+        optionItems.image = UIImage(named: "clip")
         
         optionItems.addTarget(self, action: #selector(showOptions), for: .touchUpInside)
         
@@ -1055,6 +1079,8 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
         let audioVC = AudioViewController(delegate_: self)
         audioVC.presentAUdioRecorder(target: self)
     }
+    
+    
 }
 
 
