@@ -48,7 +48,6 @@ struct MockVideoItem: MediaItem {
        self.size = CGSize(width: 240, height: 240)
        self.placeholderImage = UIImage()
         self.image = thumbnail
-    
    }
     
     init(withFileUrl : NSURL) {

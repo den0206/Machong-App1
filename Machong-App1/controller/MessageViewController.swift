@@ -13,6 +13,7 @@ import IQAudioRecorderController
 import FirebaseFirestore
 import AVFoundation
 import AVKit
+import ProgressHUD
 
 class MessageViewController: MessagesViewController {
     
@@ -42,6 +43,7 @@ class MessageViewController: MessagesViewController {
     var maxMessageNumber = 0
     var minimumMessageNumber = 0
     var loadedMessageCount = 0
+    var isGroup : Bool = false
     
     var loadedMessages : [NSDictionary] = []
     var allPctureMessages : [String] = []
@@ -53,15 +55,18 @@ class MessageViewController: MessagesViewController {
     
     var withUsers : [FUser] = []
     
-//    deinit {
-//        updatelistner?.remove()
-//    }
-//
+    deinit {
+        updatelistner?.remove()
+    }
+
  
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        ProgressHUD.show()
+        
+        self.messagesCollectionView.isHidden = true
         
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
@@ -77,18 +82,14 @@ class MessageViewController: MessagesViewController {
         messagesCollectionView.backgroundColor? = UIColor(patternImage: UIImage(named: "bg0")!)
         self.navigationController?.navigationBar.barTintColor =  UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
         self.navigationController?.navigationBar.tintColor = .darkGray
-        
+    
         self.avatarItems = [:]
         
-        print(currentSender())
-        
         setCustomTitle()
-        
+   
         
         loadMessage()
-        
-        
-    
+
         
         // refresh Controll
         configureRefreshController()
@@ -164,12 +165,12 @@ extension MessageViewController : MessagesDataSource {
         
         if avatarItems != nil {
             
-            if let avatarData = avatarItems?.object(forKey: message.sender.senderId) {
+            if let avatarData = avatarItems!.object(forKey: message.sender.senderId) {
                 
                 avatar = avatarData as! Avatar
                 avatarView.set(avatar: avatar)
             }
-            
+             
         } else {
             avatar = Avatar(image: UIImage(named: "avatarPlaceholder") , initials: "?")
             avatarView.set(avatar: avatar)
@@ -302,16 +303,33 @@ extension MessageViewController : MessageCellDelegate {
                 
                 print("photo")
                 
-            case .video(let videoItem):
+            case .video(var videoItem):
+                
+                downloadVideo(videoUrl: (videoItem.fileUrl?.path)!) { (isReadyToPlay, fileName) in
+                    print(fileName)
+                    
+                    let url = NSURL(fileURLWithPath: fileInDocumentsDirectry(filename: fileName))
+                    
+                    videoItem.fileUrl = url
+                    
+                }
+
                 if let videoUrl = videoItem.fileUrl {
+                    
+
                     let player = AVPlayer(url: videoUrl as URL)
+                    
                     let avPlayer = AVPlayerViewController()
+                    
                     
                     let session = AVAudioSession.sharedInstance()
                     
                     try! session.setCategory(.playAndRecord, mode: .default, options: .defaultToSpeaker)
+                  
                     
                     avPlayer.player = player
+                    
+                    print("あ",player,avPlayer,session)
                     
                     self.present(avPlayer, animated: true) {
                         avPlayer.player!.play()
@@ -503,9 +521,13 @@ extension MessageViewController {
             
             self.insertMessages()
             
-            self.messagesCollectionView.reloadData()
-            
-            self.messagesCollectionView.scrollToBottom(animated: true)
+            DispatchQueue.main.async {
+                ProgressHUD.dismiss()
+                self.messagesCollectionView.reloadData()
+                self.messagesCollectionView.scrollToBottom(animated: true)
+                sleep(1)
+                self.messagesCollectionView.isHidden = false
+            }
             
             self.getPicturesMessages()
 
@@ -514,7 +536,8 @@ extension MessageViewController {
             
             self.listenForNewChat()
             
-    
+           
+            
         }
     }
     
@@ -605,7 +628,6 @@ extension MessageViewController {
         
         if message != nil {
             messageLists.append(message!)
-            print(message)
             
 //            messagesCollectionView.performBatchUpdates({
 //                messagesCollectionView.insertSections([messageLists.count - 1])
@@ -843,6 +865,7 @@ extension MessageViewController {
     func avatarImageFrom(fuser : FUser) {
         
         if fuser.avatar != "" {
+          
             dataImageFromString(pictureString: fuser.avatar) { (imageData) in
                 
                 if imageData == nil {
@@ -850,8 +873,9 @@ extension MessageViewController {
                 }
                 
                 if avatarImageDictionary != nil {
-                    self.avatarImageDictionary?.removeObject(forKey: fuser.objectId)
-                    self.avatarImageDictionary?.setObject(imageData!, forKey: fuser.objectId as NSCopying)
+                    
+                    self.avatarImageDictionary!.removeObject(forKey: fuser.objectId)
+                    self.avatarImageDictionary!.setObject(imageData!, forKey: fuser.objectId as NSCopying)
                 } else {
                     self.avatarImageDictionary = [fuser.objectId : imageData!]
                 }
@@ -866,6 +890,7 @@ extension MessageViewController {
         let dafaultAvatar = Avatar(image: UIImage(named: "avatarPlaceholder") , initials: "?")
         
         if avatarDictionary != nil {
+            
             for userId in memberIds {
                 if let avataImageData = avatarDictionary![userId] {
                     let avatarItem = Avatar(image: UIImage(data: avataImageData as! Data), initials: "?")
@@ -875,9 +900,10 @@ extension MessageViewController {
                     self.avatarItems!.setValue(dafaultAvatar, forKey: userId)
                 }
             }
+            
             self.messagesCollectionView.reloadData()
         }
-        
+       
     }
     
 }
