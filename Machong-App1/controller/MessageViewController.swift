@@ -28,6 +28,7 @@ class MessageViewController: MessagesViewController {
 
     var messageLists : [Message] = []
     
+    
     let refreshController = UIRefreshControl()
     
     var chatRoomId : String!
@@ -46,6 +47,7 @@ class MessageViewController: MessagesViewController {
     var isGroup : Bool = false
     
     var loadedMessages : [NSDictionary] = []
+    var objectMessage : [NSDictionary] = []
     var allPctureMessages : [String] = []
     
     var showAvatars =  true
@@ -146,16 +148,44 @@ extension MessageViewController : MessagesDataSource {
     
 
     
-//    // メッセージの上に文字を表示（名前）
-//      func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+    // メッセージの上に文字を表示（日付）
+      func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        
+        return NSAttributedString(string: MessageKitDateFormatter.shared.string(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+        
 //          let name = message.sender.displayName
 //          return NSAttributedString(string: name, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
-//      }
+      }
 
-      // （日付）
+      // メッセージの下に文字を表示（既読）
       func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-          
-        return NSAttributedString(string: MessageKitDateFormatter.shared.string(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+        
+        let messageDictionary = objectMessage[indexPath.section]
+        let status : NSAttributedString
+//        let atributeStringColor = [NSAttributedString.Key.foregroundColor : UIColor.lightGray]
+        
+        if isFromCurrentSender(message: message) {
+            switch messageDictionary[kSTATUS] as! String{
+            case kDELIVERED:
+                status = NSAttributedString(string: kDELIVERED, attributes:  [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+            case kREAD :
+                status = NSAttributedString(string: kREAD, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
+            default:
+                status = NSAttributedString(string: "✔︎", attributes:  [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+            }
+            
+            return status
+        }
+        
+        return nil
+        
+//        if indexPath.section == (messageLists.count - 1) {
+//            return status
+//        } else {
+//            return NSAttributedString(string: "")
+//        }
+
+
       }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
@@ -233,19 +263,19 @@ extension MessageViewController : MessagesLayoutDelegate {
 
     
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 18
+        return 15
     }
     
     func cellBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 17
+        return 0
     }
     
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 20
+        return 35
     }
     
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 16
+        return 30
     }
     
     
@@ -498,16 +528,20 @@ extension MessageViewController {
         
         //update message Status
         
-//        updatelistner = reference(.Message).document(FUser.currentId()).collection(chatRoomId).addSnapshotListener({ (snapshot, error) in
-//
-//            guard let snapshot = snapshot else {return}
-//
-//            if !snapshot.isEmpty {
-//                snapshot.documentChanges.forEach { (diff) in
-//
-//                }
-//            }
-//        })
+        updatelistner = reference(.Message).document(FUser.currentId()).collection(chatRoomId).addSnapshotListener({ (snapshot, error) in
+
+            guard let snapshot = snapshot else {return}
+
+            if !snapshot.isEmpty {
+                snapshot.documentChanges.forEach { (diff) in
+                    
+                    if diff.type == .modified {
+                        self.updateMessage(messageDictionary: diff.document.data() as NSDictionary)
+                    }
+
+                }
+            }
+        })
         
         //get last 11 messages
         
@@ -536,9 +570,9 @@ extension MessageViewController {
             
             self.listenForNewChat()
             
-           
-            
         }
+        
+       
     }
     
     //New CHAT Listner
@@ -618,6 +652,8 @@ extension MessageViewController {
 
         
         if messageDictionary[kSENDERID] as! String != FUser.currentId() {
+            // Add Read
+            
             OutGoingMessage.updateMessage(withId: messageDictionary[kMESSAGEID] as! String, chatRoomId: chatRoomId, memberIds: memberIds)
         }
         
@@ -627,27 +663,29 @@ extension MessageViewController {
         
         
         if message != nil {
+            objectMessage.append(messageDictionary)
             messageLists.append(message!)
-            
-//            messagesCollectionView.performBatchUpdates({
-//                messagesCollectionView.insertSections([messageLists.count - 1])
-//                if messageLists.count >= 2 {
-//                    messagesCollectionView.reloadSections([messageLists.count - 2])
-//                }
-//            }, completion: { [weak self] _ in
-//                if self?.isLastsectionVisible() == true {
-//                    self?.messagesCollectionView.scrollToBottom(animated: true)
-//                }
-//            })
         }
         
-
+        
         
         return isInComing(messageDictionary: messageDictionary)
         
     }
     
-    // load backGround
+    func updateMessage(messageDictionary : NSDictionary) {
+        
+        for index in 0 ..< objectMessage.count {
+            let temp = objectMessage[index]
+            
+            if messageDictionary[kMESSAGEID] as! String == temp[kMESSAGEID] as! String {
+                objectMessage[index] = messageDictionary
+                self.messagesCollectionView.reloadData()
+            }
+        }
+        
+    }
+   //MARK: LOad BackGround
     
     func getOldMessagesinBackGround() {
         if loadedMessages.count > 10 {
@@ -703,7 +741,7 @@ extension MessageViewController {
         let message = inComingMessage.createMessage(messageDictionary: messageDictionary, chatRoomID: chatRoomId)
         
      
-        
+        objectMessage.insert(messageDictionary, at: 0)
         messageLists.insert(message!, at: 0)
     }
     

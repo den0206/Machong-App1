@@ -149,7 +149,68 @@ extension ChatsViewController : UITableViewDelegate, UITableViewDataSource {
         navigationController?.pushViewController(messageVC, animated: true)
         
     }
+    
+    //MARK: Edit & Delete
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        
+        var tempRecent : NSDictionary!
+        
+        if searchController.isActive && searchController.searchBar.text != "" {
+            tempRecent = filterdChats[indexPath.row]
+        } else {
+            tempRecent = recentChats[indexPath.row]
+        }
+        
+        var muteTitle = "Unmute"
+        var mute = false
+        
+        if (tempRecent[kMEMBERSTOPUSH] as! [String]).contains(FUser.currentId()) {
+            muteTitle = "Mute"
+            mute = true
+        }
+        
+        let deleteAction = UITableViewRowAction(style: .default, title: "Delete") { (action, indexPath) in
+            self.recentChats.remove(at: indexPath.row)
+            deleteRecentChat(recentChatDictionary: tempRecent)
+            
+            tableView.reloadData()
+        }
+        
+        let muteAction = UITableViewRowAction(style: .default, title: muteTitle) { (action, indexPath) in
+            self.updatePushMembers(recent: tempRecent, mute: mute)
+        }
+        
+        muteAction.backgroundColor = #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1)
+        deleteAction.backgroundColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
+        
+        return [deleteAction,muteAction]
+        
+    }
+    
+    func updatePushMembers(recent : NSDictionary, mute : Bool) {
+        
+        var membersToPush = recent[kMEMBERSTOPUSH] as! [String]
+        
+        if mute {
+            let index = membersToPush.firstIndex(of: FUser.currentId())!
+            membersToPush.remove(at: index)
+        } else {
+            membersToPush.append(FUser.currentId())
+        }
+        
+        
+        // save Firestore
+        updateExistingRecentWithNewValuies(chatRoomId: recent[kCHATROOMID] as! String, members: recent[kMEMBERS] as! [String], withValues: [kMEMBERSTOPUSH : membersToPush])
+        
+    }
 }
+
+
 
 //MARK: RecentChatCell Delegate
 

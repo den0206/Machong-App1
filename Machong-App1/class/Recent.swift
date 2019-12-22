@@ -134,6 +134,7 @@ func updateRecent(chatRoomId : String, lastMessage : String) {
                 let currentRecent = recent.data() as NSDictionary
                 
                 if currentRecent[kUSERID] as? String == FUser.currentId() {
+                    
                     updateRecentItem(recent: currentRecent, lastMessage: lastMessage)
                 }
                 
@@ -143,20 +144,50 @@ func updateRecent(chatRoomId : String, lastMessage : String) {
     }
 }
 
+func deleteRecentChat(recentChatDictionary : NSDictionary) {
+    if let recentId = recentChatDictionary[kRECENTID] {
+        
+        reference(.Recent).document(recentId as! String).delete()
+    }
+    
+}
+
 func updateRecentItem(recent : NSDictionary, lastMessage : String) {
     
     let date = dateFormatter().string(from: Date())
     
     var counter = recent[kCOUNTER] as! Int
     
-    if recent[kUSERID] as? String == FUser.currentId() {
+    if recent[kUSERID] as? String != FUser.currentId() {
         counter += 1
     }
     
     let values = [kLASTMESSAGE : lastMessage, kCOUNTER : counter, kDATE : date] as [String : Any]
     
-    reference(.Recent).document(recent[kCHATROOMID] as! String).updateData(values)
+    reference(.Recent).document(recent[kRECENTID] as! String).updateData(values)
     
     
     
+}
+
+func updateExistingRecentWithNewValuies(chatRoomId : String, members: [String], withValues : [String : Any]) {
+    
+    reference(.Recent).whereField(kCHATROOMID, isEqualTo: chatRoomId).getDocuments { (snapshot, error) in
+        
+        guard let snapshot = snapshot else {return}
+        
+        if !snapshot.isEmpty {
+            for recent in snapshot.documents {
+                
+                let recent = recent.data() as NSDictionary
+                
+                updateRecent(recentId: recent[kRECENTID] as! String, withValues: withValues)
+            }
+        }
+    }
+}
+
+func updateRecent(recentId: String, withValues : [String : Any]) {
+    
+    reference(.Recent).document(recentId).updateData(withValues)
 }

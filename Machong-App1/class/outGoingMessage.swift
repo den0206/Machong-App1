@@ -87,12 +87,14 @@ class OutGoingMessage {
         let readDate = dateFormatter().string(from: Date())
         let value = [kSTATUS : kREAD, kREADDATE : readDate]
         
+        
         for userId in memberIds {
             reference(.Message).document(userId).collection(chatRoomId).document(withId).getDocument { (snapshot, error) in
                 
                 guard let snapshot = snapshot else {return}
                 
                 if snapshot.exists {
+                    
                     reference(.Message).document(userId).collection(chatRoomId).document(withId).updateData(value)
                 }
             }
