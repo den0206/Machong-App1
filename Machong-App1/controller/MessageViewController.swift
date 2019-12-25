@@ -38,6 +38,7 @@ class MessageViewController: MessagesViewController {
     let legitType = [kAUDIO, kVIDEO, kLOCATION, kTEXT, kPICTURE]
     var loadOld = false
     
+    var typinglistner : ListenerRegistration?
     var newChatListner : ListenerRegistration?
     var updatelistner : ListenerRegistration?
     
@@ -46,6 +47,7 @@ class MessageViewController: MessagesViewController {
     var loadedMessageCount = 0
     var isGroup : Bool = false
     
+    var typingCounter = 0
     var loadedMessages : [NSDictionary] = []
     var objectMessage : [NSDictionary] = []
     var allPctureMessages : [String] = []
@@ -70,6 +72,9 @@ class MessageViewController: MessagesViewController {
         
         ProgressHUD.show()
         
+        createTypingObserver()
+        
+        
         self.messagesCollectionView.isHidden = true
         
         messagesCollectionView.messagesDataSource = self
@@ -82,11 +87,12 @@ class MessageViewController: MessagesViewController {
         messageInputBar.backgroundView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         messageInputBar.inputTextView.backgroundColor = .white
         
-      
         
         messagesCollectionView.backgroundColor? = UIColor(patternImage: UIImage(named: "bg0")!)
         self.navigationController?.navigationBar.barTintColor =  UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
         self.navigationController?.navigationBar.tintColor = .darkGray
+        
+        hideCurrentSenderAvatar()
     
         self.avatarItems = [:]
         
@@ -109,13 +115,7 @@ class MessageViewController: MessagesViewController {
         configureAccesary()
         
         
-        let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
-        layout?.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
-        
-        // Hide the outgoing avatar and adjust the label alignment to line up with the messages
-        layout?.setMessageOutgoingAvatarSize(.zero)
-        layout?.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
-        layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+       
         
         
         
@@ -136,8 +136,8 @@ class MessageViewController: MessagesViewController {
         clearRecentCounter(chatRoomID: chatRoomId)
     }
     
-
     
+  
 }
 
 //MARK: MessageDate Source
@@ -160,12 +160,15 @@ extension MessageViewController : MessagesDataSource {
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         
         if indexPath.section % 3 == 0 {
-           
+            
             return NSAttributedString(string: MessageKitDateFormatter.shared.string(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         }
         return nil
     }
     
+    
+
+
 
     
     // メッセージの上に文字を表示（日付）
@@ -198,14 +201,6 @@ extension MessageViewController : MessagesDataSource {
         }
         
         return nil
-        
-//        if indexPath.section == (messageLists.count - 1) {
-//            return status
-//        } else {
-//            return NSAttributedString(string: "")
-//        }
-
-
       }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
@@ -227,6 +222,15 @@ extension MessageViewController : MessagesDataSource {
         }
     }
     
+    func hideCurrentSenderAvatar() {
+        let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
+        layout?.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
+        
+        // Hide the outgoing avatar and adjust the label alignment to line up with the messages
+        layout?.setMessageOutgoingAvatarSize(.zero)
+        layout?.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+        layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+    }
     
 }
 
@@ -327,21 +331,89 @@ extension MessageViewController : InputBarAccessoryViewDelegate {
         
         if text == "" {
             
+            
             setAudioButton()
             
         } else {
             messageInputBar.setStackViewItems([messageInputBar.sendButton], forStack: .right, animated: false)
         }
         
+        startTypingCounter()
+    }
+
+    
+    
+    //MARK: Typing Indicator
+    
+    func setTypingIndicatorViewHidden(_ isHidden: Bool, performUpdates updates: (() -> Void)? = nil) {
+        setTypingIndicatorViewHidden(isHidden, animated: true, whilePerforming: updates) { [weak self] success in
+            if success, self?.isLastsectionVisible() == true {
+                self?.messagesCollectionView.scrollToBottom(animated: true)
+            }
+        }
+    }
+    
+    func createTypingObserver() {
+        
+        typinglistner = reference(.Typing).document(chatRoomId).addSnapshotListener({ (snapshot, error) in
+            
+            guard let snapshot = snapshot else {return}
+            
+            if snapshot.exists {
+                
+                for data in snapshot.data()! {
+                    // only with person
+                    if data.key != FUser.currentId() {
+                        let typing = data.value as! Bool
+                        
+                        print(typing)
+                        
+                        self.setTypingIndicatorViewHidden(typing)
+                    }
+                }
+            } else {
+                reference(.Typing).document(self.chatRoomId).setData([FUser.currentId(): true])
+            }
+        })
         
     }
     
     
-    //MARK: Typiong Indicator
+    func startTypingCounter() {
+        
+        typingCounter += 1
+        
+        typingCountSave(typing: false)
+        
+        print(typingCounter)
+        self.perform(#selector(typingCounterStop), with: nil, afterDelay: 2.0)
+    }
     
+    @objc func typingCounterStop() {
+        
+        typingCounter -= 1
+        
+//        typingCounter = 0
+        
+        if typingCounter == 0 {
+            typingCountSave(typing: true)
+        }
+        
+    }
     
+    func typingCountSave(typing : Bool) {
+        reference(.Typing).document(chatRoomId).updateData([FUser.currentId() : typing]) { (error) in
+            
+            if error != nil {
+                print("typing not reference")
+            }
+        }
+    }
     
 }
+
+
+
 
 //MARK: messageCell Delegate (Tap )
 
@@ -1072,6 +1144,8 @@ extension MessageViewController : UIImagePickerControllerDelegate, UINavigationC
               messageInputBar.setRightStackViewWidthConstant(to: 50, animated: false)
 
               messageInputBar.setStackViewItems([micItem], forStack: .right, animated: true)
+        
+        self.setTypingIndicatorViewHidden(true)
 
     }
     

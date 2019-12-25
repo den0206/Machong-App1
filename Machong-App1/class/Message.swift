@@ -77,9 +77,7 @@ struct MockAudioItem : AudioItem {
         // compute duration
         let audioAsset = AVURLAsset(url: fileUrl as URL)
         self.duration = Float(CMTimeGetSeconds(audioAsset.duration))
-        
 
-        
     }
     
     
