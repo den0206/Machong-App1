@@ -139,7 +139,7 @@ class MessageViewController: MessagesViewController {
         clearRecentCounter(chatRoomID: chatRoomId)
     }
     
-    //MARK: Long Press Cell Options(Delete)
+    //MARK: Delete Messages LongTapped
     
     
     
@@ -171,10 +171,10 @@ class MessageViewController: MessagesViewController {
             if action == NSSelectorFromString("delete:") {
                 
                 switch message.kind {
-                case .text, .attributedText:
+                case .text, .attributedText, .location:
                     print("text Delete")
                     print(messageId)
-                case .photo(let phtoItem) :
+                case .photo :
                     // get URL
                     let imageUrl = objectMessage[indexPath.section][kPICTURE] as! String
                     print(imageUrl)
@@ -188,6 +188,31 @@ class MessageViewController: MessagesViewController {
                         }
                     }
                     
+                case .video(let video) :
+                    
+                    let videoUrl = objectMessage[indexPath.section][kVIDEO] as! String
+                    print(videoUrl)
+                    
+                    // delete Video Stroge
+                    
+                    storage.reference(forURL: videoUrl).delete { (error) in
+                        if error != nil {
+                            print("削除できませんでした。")
+                        }
+                    }
+                    
+                case .audio :
+                    let audioUrl = objectMessage[indexPath.section][kAUDIO] as! String
+                    print(audioUrl)
+                    
+                    // delete Audio Stroge
+                    storage.reference(forURL: audioUrl).delete { (error) in
+                        
+                        if error != nil {
+                            print("削除できませんでした。")
+                        }
+                    }
+                    
                 default:
                     return
                 }
@@ -195,9 +220,9 @@ class MessageViewController: MessagesViewController {
                 objectMessage.remove(at: indexPath.section)
                 messageLists.remove(at: indexPath.section)
                 collectionView.deleteSections([indexPath.section])
-                
+
 //                 delete firestore
-                
+
                 OutGoingMessage.deleteMessage(withId: messageId, chatRoomId: chatRoomId)
 
                 
