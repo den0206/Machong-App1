@@ -29,6 +29,7 @@ class MessageViewController: MessagesViewController {
     var messageLists : [Message] = []
     
     
+    
     let refreshController = UIRefreshControl()
     
     var chatRoomId : String!
@@ -69,6 +70,9 @@ class MessageViewController: MessagesViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//        let reportMenuItem = UIMenuItem(title: "削除", action: #selector(MessageCollectionViewCell.delete(_:)))
+//        UIMenuController.shared.menuItems = [reportMenuItem]
         
         ProgressHUD.show()
         
@@ -114,10 +118,9 @@ class MessageViewController: MessagesViewController {
         
         configureAccesary()
         
+      
         
        
-        
-        
         
     }
     
@@ -136,8 +139,91 @@ class MessageViewController: MessagesViewController {
         clearRecentCounter(chatRoomID: chatRoomId)
     }
     
+    //MARK: Long Press Cell Options(Delete)
+    
+    
+    
+    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
+        
+        let message = messageLists[indexPath.section]
+        // actionは結構色んな種類(cooy, deleteなど)がデフォルトで定義されているので必要であればtrueにすればメニューに表示されるようになる
+        switch action {
+        case NSSelectorFromString("delete:"):
+            
+            if message.sender.senderId == FUser.currentId() {
+                 return true
+            } else {
+                return super.collectionView(collectionView, canPerformAction: action, forItemAt: indexPath, withSender: sender)
+            }
+           
+        default:
+            return super.collectionView(collectionView, canPerformAction: action, forItemAt: indexPath, withSender: sender)
+        }
+    }
+        
+    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
+        
+        let message = messageLists[indexPath.section]
+        let messageId = objectMessage[indexPath.section][kMESSAGEID] as! String
+        
+        // delete message
+
+            if action == NSSelectorFromString("delete:") {
+                
+                switch message.kind {
+                case .text, .attributedText:
+                    print("text Delete")
+                    print(messageId)
+                case .photo(let phtoItem) :
+                    // get URL
+                    let imageUrl = objectMessage[indexPath.section][kPICTURE] as! String
+                    print(imageUrl)
+                    
+                    // delete Image Storoge
+                    
+                    storage.reference(forURL: imageUrl).delete { (error) in
+                        
+                        if error != nil {
+                            print("削除できませんでした。")
+                        }
+                    }
+                    
+                default:
+                    return
+                }
+                
+                objectMessage.remove(at: indexPath.section)
+                messageLists.remove(at: indexPath.section)
+                collectionView.deleteSections([indexPath.section])
+                
+//                 delete firestore
+                
+                OutGoingMessage.deleteMessage(withId: messageId, chatRoomId: chatRoomId)
+
+                
+                
+            } else {
+                super.collectionView(collectionView, performAction: action, forItemAt: indexPath, withSender: sender)
+            }
+        }
+    
     
   
+}
+
+extension MessageCollectionViewCell {
+
+    override open func delete(_ sender: Any?) {
+        
+        // Get the collectionView
+        if let collectionView = self.superview as? UICollectionView {
+            // Get indexPath
+            if let indexPath = collectionView.indexPath(for: self) {
+                // Trigger action
+                collectionView.delegate?.collectionView?(collectionView, performAction: NSSelectorFromString("delete:"), forItemAt: indexPath, withSender: sender)
+            }
+        }
+    }
 }
 
 //MARK: MessageDate Source
@@ -231,6 +317,8 @@ extension MessageViewController : MessagesDataSource {
         layout?.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
         layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
     }
+    
+
     
 }
 
@@ -665,6 +753,8 @@ extension MessageViewController {
             self.getOldMessagesinBackGround()
             
             self.listenForNewChat()
+            
+            print(self.messageLists.count, self.objectMessage.count)
             
         }
         

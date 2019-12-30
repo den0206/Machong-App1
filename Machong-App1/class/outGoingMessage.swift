@@ -80,6 +80,11 @@ class OutGoingMessage {
         
     }
     
+    class func deleteMessage(withId : String, chatRoomId : String) {
+        
+        reference(.Message).document(FUser.currentId()).collection(chatRoomId).document(withId).delete()
+    }
+    
     // update ReadDate
     
     class func updateMessage(withId : String, chatRoomId : String, memberIds : [String]) {
