@@ -24,7 +24,6 @@ class MessageViewController: MessagesViewController {
     
     lazy var audioController = BasicAudioController(messageCollectionView: messagesCollectionView)
     
-//    lazy var inComingMessage =  InComingMessage(collectionView_: self.messagesCollectionView)
 
     var messageLists : [Message] = []
     
@@ -42,6 +41,7 @@ class MessageViewController: MessagesViewController {
     var typinglistner : ListenerRegistration?
     var newChatListner : ListenerRegistration?
     var updatelistner : ListenerRegistration?
+    
     
     var maxMessageNumber = 0
     var minimumMessageNumber = 0
@@ -173,7 +173,7 @@ class MessageViewController: MessagesViewController {
                 switch message.kind {
                 case .text, .attributedText, .location:
                     print("text Delete")
-                    print(messageId)
+                    
                 case .photo :
                     // get URL
                     let imageUrl = objectMessage[indexPath.section][kPICTURE] as! String
@@ -188,7 +188,7 @@ class MessageViewController: MessagesViewController {
                         }
                     }
                     
-                case .video(let video) :
+                case .video :
                     
                     let videoUrl = objectMessage[indexPath.section][kVIDEO] as! String
                     print(videoUrl)
@@ -217,9 +217,27 @@ class MessageViewController: MessagesViewController {
                     return
                 }
                 
+                
+                
                 objectMessage.remove(at: indexPath.section)
                 messageLists.remove(at: indexPath.section)
                 collectionView.deleteSections([indexPath.section])
+                
+                
+                // Get LastMessage
+                
+                reference(.Message).document(FUser.currentId()).collection(chatRoomId).order(by: kDATE, descending: true).limit(to: 1).getDocuments { (snapshot, error) in
+                    
+                    guard let snapshot = snapshot else {return}
+                    
+                    if !snapshot.isEmpty {
+                        let lastMessage = snapshot.documents[0][kMESSAGE] as! String
+                        updateRecent(chatRoomId: self.chatRoomId, lastMessage: lastMessage)
+                        
+                    } else {
+                        updateRecent(chatRoomId: self.chatRoomId, lastMessage: "削除されました。")
+                    }
+                }
 
 //                 delete firestore
 
