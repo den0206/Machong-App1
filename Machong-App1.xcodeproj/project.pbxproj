@@ -20,6 +20,7 @@
 		3A5A3FCC239E0ABB006A55E5 /* downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5A3FCB239E0ABB006A55E5 /* downloader.swift */; };
 		3A7A2F9F239A75D900EB3BF3 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7A2F9E239A75D900EB3BF3 /* MessageViewController.swift */; };
 		3A7A2FA1239A76C700EB3BF3 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7A2FA0239A76C700EB3BF3 /* Message.swift */; };
+		3A82259023BA3B3000AB6CEA /* EditProfileTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A82258F23BA3B3000AB6CEA /* EditProfileTableViewController.swift */; };
 		3AA1B996238F904400A60FA6 /* FinishRegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AA1B995238F904400A60FA6 /* FinishRegistrationViewController.swift */; };
 		3ABBC606239DFF6B004040E6 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABBC605239DFF6B004040E6 /* Camera.swift */; };
 		3ABFF95D238F85160008371A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABFF95C238F85160008371A /* AppDelegate.swift */; };
@@ -53,6 +54,7 @@
 		3A5A3FCB239E0ABB006A55E5 /* downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = downloader.swift; sourceTree = "<group>"; };
 		3A7A2F9E239A75D900EB3BF3 /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		3A7A2FA0239A76C700EB3BF3 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		3A82258F23BA3B3000AB6CEA /* EditProfileTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileTableViewController.swift; sourceTree = "<group>"; };
 		3AA1B995238F904400A60FA6 /* FinishRegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishRegistrationViewController.swift; sourceTree = "<group>"; };
 		3ABBC605239DFF6B004040E6 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		3ABFF959238F85160008371A /* Machong-App1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Machong-App1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,6 +158,7 @@
 				3A1FDA6D23A4911D0047AE1F /* MapViewController.swift */,
 				3A1DA39C23A4C5190008033F /* AudioViewController.swift */,
 				3A43D26923A5E8CA007B8E24 /* BasicAudioController.swift */,
+				3A82258F23BA3B3000AB6CEA /* EditProfileTableViewController.swift */,
 			);
 			path = controller;
 			sourceTree = "<group>";
@@ -319,6 +322,7 @@
 				3AA1B996238F904400A60FA6 /* FinishRegistrationViewController.swift in Sources */,
 				3AD335AC2393768B008B20B4 /* ProfileTableViewController.swift in Sources */,
 				3A1FDA6E23A4911D0047AE1F /* MapViewController.swift in Sources */,
+				3A82259023BA3B3000AB6CEA /* EditProfileTableViewController.swift in Sources */,
 				3ACCA6072391FE8B0002E258 /* SettingTableViewController.swift in Sources */,
 				3A3DB10023939C940060EBD0 /* Recent.swift in Sources */,
 				3AFAED14238FB7EE004DA00B /* FUser.swift in Sources */,
