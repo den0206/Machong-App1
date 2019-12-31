@@ -17,6 +17,10 @@ DerivedData
 *.ipa
 *.xcuserstate
 
+helper/constracts.swift
+helper/downloader.swift
+GoogleService-Info.plist
+
 # CocoaPod
 Pods/*
 
