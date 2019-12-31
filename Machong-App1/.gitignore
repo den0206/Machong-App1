@@ -47,7 +47,11 @@ playground.xcworkspace
 # .swiftpm
 
 .build/
+<<<<<<< HEAD
 *helper/
+=======
+
+>>>>>>> zima
 
 # CocoaPods
 #
