@@ -10,6 +10,7 @@ import UIKit
 import MessageKit
 import InputBarAccessoryView
 import IQAudioRecorderController
+import SKPhotoBrowser
 import FirebaseFirestore
 import AVFoundation
 import AVKit
@@ -548,7 +549,7 @@ extension MessageViewController : InputBarAccessoryViewDelegate {
 
 //MARK: messageCell Delegate (Tap )
 
-extension MessageViewController : MessageCellDelegate {
+extension MessageViewController : MessageCellDelegate{
     
     func didTapMessage(in cell: MessageCollectionViewCell) {
         
@@ -556,9 +557,17 @@ extension MessageViewController : MessageCellDelegate {
             let message = messageLists[indexPath.section]
             
             switch message.kind {
-            case .photo(let PhotoItem):
+            case .photo(let photoItem):
+        
+                let target = (photoItem.image)!
                 
-                print("photo")
+                var images = [SKPhoto]()
+                let photo = SKPhoto.photoWithImage(target)
+                images.append(photo)
+                
+                let browser = SKPhotoBrowser(photos: images)
+                browser.initializePageIndex(0)
+                self.present(browser,animated: true,completion: nil)
                 
             case .video(var videoItem):
                 
